@@ -2,9 +2,10 @@ import React,{useEffect,useState} from 'react';
 import axios from 'axios';
 import {Table} from "../../components";
 import './index.scss';
+import { createTime } from "../../utils";
 
 const columns = [
-    {header:"日期",bind:'date',width:200},
+    {header:"日期",bind:'date',width:160,convert:v=>createTime(new Date(v)).format("YYYY-MM-DD").value},
     {header:"时间",bind:'time'},
     {header:"信息",bind:'info',width:300},
 ]

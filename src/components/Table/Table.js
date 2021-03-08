@@ -3,35 +3,44 @@ import _ from 'lodash';
 import clsx from "clsx";
 import './Table.scss';
 
-function getRunTimeCol(col){
-    return _.assign({width:100,align:'left'},col);
+function getRunTimeCol(col) {
+    return _.assign({
+        width: 100,
+        align: 'left',
+        convert: v => v,
+    }, col);
 }
 
-function Table(props) {
-    const { columns, data, className, style } = props;
-
+function Table({ columns, data, className, style }) {
     return (<div className={ clsx('c-table', className) } style={ style }>
-        <div className="c-table-header c-table-row">
-            {
-                _.map(columns, (col, i) => {
-                    const col_run_time = getRunTimeCol(col);
-                    return <Cell key={ i }
-                                 width={col_run_time.width}
-                                 align={col_run_time.align}
-                                 text={ col_run_time.header }/>
-                })
-            }
-        </div>
-
-        <div className="c-table-content">
-            { _.map(data, (o, i) => {
-                return <Row key={ i } data={ o } columns={ columns }/>
-            }) }
-        </div>
+        <Header columns={ columns }/>
+        <Content data={ data } columns={ columns }/>
     </div>);
 }
 
 export default Table;
+
+function Header({ columns }) {
+    return <div className="c-table-header c-table-row">
+        {
+            _.map(columns, (col, i) => {
+                const { width, align, header } = getRunTimeCol(col);
+                return <Cell key={ i }
+                             width={ width }
+                             align={ align }
+                             text={ header }/>
+            })
+        }
+    </div>
+}
+
+function Content({ data, columns }) {
+    return <div className="c-table-content">
+        { _.map(data, (o, i) => {
+            return <Row key={ i } data={ o } columns={ columns }/>
+        }) }
+    </div>;
+}
 
 function Row(props) {
     const { data, columns } = props;
@@ -39,11 +48,11 @@ function Row(props) {
     return <div className="c-table-row">
         {
             _.map(columns, (col, i) => {
-                const col_run_time = getRunTimeCol(col);
+                const { width, align, bind, convert } = getRunTimeCol(col);
                 return <Cell key={ i }
-                             width={col_run_time.width}
-                             align={col_run_time.align}
-                             text={ data[ col_run_time.bind ] }/>
+                             width={ width }
+                             align={ align }
+                             text={ convert(data[ bind ]) }/>
             })
         }
     </div>
