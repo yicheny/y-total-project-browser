@@ -41,11 +41,13 @@ function StudyRecord(props) {
         const formData = new FormData();
         formData.append('file',file,file.name);
         await tryFetch(()=>axios.post("/api/study-record/uploadFile",formData));
-        alert("文件上传成功！")
+        alert("文件上传成功！");
     }
 
     async function download(){
-
+        const link = document.createElement('a');
+        link.href = "/api/study-record/downloadFile";
+        link.click();
     }
 
     async function remove(){
