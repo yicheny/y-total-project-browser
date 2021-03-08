@@ -13,7 +13,7 @@ function StudyRecord(props) {
     const [data,setData] = useState([]);
 
     useEffect(()=>{
-        axios.get("http://127.0.0.1:8011/study-record/query").then(res=>{
+        axios.get("/api/study-record/query").then(res=>{
             setData(res.data);
         }).catch(e=>{
             console.error(e.message);
