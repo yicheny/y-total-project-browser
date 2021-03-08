@@ -1,0 +1,23 @@
+.c-table{
+  background: #fff;
+  &-header{
+    background: #fafafa;
+  }
+
+  &-row{
+    display: flex;
+    border-bottom:1px solid #f0f0f0;
+  }
+
+  &-cell{
+    height:35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-right:1px solid #f0f0f0;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+}
