@@ -10,15 +10,25 @@
   }
 
   &-cell{
+    &.left{
+      justify-content: left;
+    }
+    &.center{
+      justify-content: center;
+    }
+    padding: 0 8px;
     flex:none;
     height:35px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     box-sizing: border-box;
     border-right:1px solid #f0f0f0;
     overflow: hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+    >.c-checkbox{
+      margin-right:0;
+    }
   }
 }
