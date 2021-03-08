@@ -1,4 +1,4 @@
-import React,{useEffect,useState,useCallback} from 'react';
+import React,{useEffect,useState,useCallback,useRef} from 'react';
 import _ from 'lodash';
 import axios from 'axios';
 import {Table} from "../../components";
@@ -21,30 +21,34 @@ const columns = [
 
 const defaultData = [];
 function StudyRecord(props) {
-    const [data,setData] = useState([]);
     const [selection,setSelection] = useState([]);
+    const {data,query} = useData();
+    const inputRef = useRef();
 
-    const query = useCallback(()=>{
-        axios.get("/api/study-record/query").then(res=>{
-            setData(res.data)
-        }).catch(e=>{
-            console.error(e.message);
-        })
-    },[])
-
-    useEffect(()=>{
-        query();
-    },[query])
-
-    // console.log(data);
     return (<div className='study-record'>
-            <button onClick={add}>生成数据</button>
+            <input type='file' accept='.txt' ref={inputRef}/>
+            <button onClick={upload}>上传</button>
+            <button onClick={download}>下载</button>
+            <button onClick={add}>生成随机数据</button>
             <button onClick={deleteByIds}>删除选中数据</button>
             <button onClick={remove}>全部删除</button>
             <Table data={data} columns={columns} defaultSelection={defaultData} onSelectionChange={setSelection}/>
         </div>);
 
-   async function remove(){
+    async function upload(){
+        const file = _.head(inputRef.current.files);
+        if(!file) return alert("没有选择文件！");
+        const formData = new FormData();
+        formData.append('file',file,file.name);
+        await tryFetch(()=>axios.post("/api/study-record/uploadFile",formData));
+        alert("文件上传成功！")
+    }
+
+    async function download(){
+
+    }
+
+    async function remove(){
         await tryFetch(()=>axios.get("/api/study-record/deleteAll"));
     }
 
@@ -67,3 +71,21 @@ function StudyRecord(props) {
 }
 
 export default StudyRecord;
+
+function useData(){
+    const [data,setData] = useState([]);
+
+    const query = useCallback(()=>{
+        axios.get("/api/study-record/query").then(res=>{
+            setData(res.data)
+        }).catch(e=>{
+            console.error(e.message);
+        })
+    },[])
+
+    useEffect(()=>{
+        query();
+    },[query]);
+
+    return {data,query};
+}
