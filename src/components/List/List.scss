@@ -1,0 +1,30 @@
+.c-list {
+  min-width: 320px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  color: rgba(0, 0, 0, .65);
+  font-size: 14px;
+  background: #fff;
+
+  .c-list-header {
+    padding: 8px 16px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .c-list-content {
+    .c-item {
+      padding: 8px 16px;
+      border-bottom: 1px solid #f0f0f0;
+
+      .c-item-title {
+        margin-right: 12px;
+      }
+    }
+  }
+
+  .c-list-footer {
+    padding: 8px 16px;
+    letter-spacing: 1px;
+  }
+}

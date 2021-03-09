@@ -1,0 +1,16 @@
+.study-record{
+  .option{
+    margin-bottom: 12px;
+    padding:4px 0;
+    background-color:#fff;
+    >div{
+      margin:6px 0;
+      .c-button{
+        &.upload{
+          padding:4px 16px;
+        }
+        padding:6px 12px;
+      }
+    }
+  }
+}

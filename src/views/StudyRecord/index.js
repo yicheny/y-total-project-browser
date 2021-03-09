@@ -1,70 +1,28 @@
-import React, {useEffect, useState, useCallback, useRef, useMemo,Fragment} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import _ from 'lodash';
 import axios from 'axios';
-import { Table, Button, Switch } from "../../components";
+import { Table } from "../../components";
 import './index.scss';
 import {createTime} from "../../utils";
 import message from "../../components/Message/Message";
 import { Operations } from "../../bizComponents";
 import { useOpenInfo } from "../../hooks";
 import EditDialog from "./EditDialog";
+import TotalDialog from "./TotalDialog";
+import Option from "./Option";
 
 const defaultData = [];
-function StudyRecord(props) {
+function StudyRecord() {
     const {data, query} = useData();
     const [selection, setSelection] = useState([]);
     const {openInfo,setOpenInfo,close} = useOpenInfo();
-    const [isClear,setIsClear] = useState(true);
-    const inputRef = useRef();
 
     return (<div className='study-record' style={{minWidth:932}}>
-        <div style={{marginBottom: 12,padding:"4px 0",backgroundColor:'#fff'}}>
-            <UploadButton inputRef={inputRef}>选择文件</UploadButton>
-            <Button primary onClick={upload}>上传</Button>
-            <Switch defaultChecked={isClear} onChange={setIsClear} checkedChildren='清空' unCheckedChildren='追加'/>
-            <Button primary onClick={download}>下载</Button>
-            <Button primary onClick={add}>生成随机数据</Button>
-            <Button primary onClick={deleteByIds}>删除选中数据</Button>
-            <div>当前共有数据：{data.length}条</div>
-        </div>
+        <Option data={data} selection={selection} query={query} setOpenInfo={setOpenInfo}/>
         <Table data={data} columns={useColumns(setOpenInfo)} defaultSelection={defaultData} onSelectionChange={setSelection}/>
         <EditDialog visible={openInfo.type === 'edit'} close={close} source={openInfo.source}/>
+        <TotalDialog visible={openInfo.type === 'total'} close={close} data={data}/>
     </div>);
-
-    async function upload() {
-        if(!inputRef.current.files.length) return message.show({info:"没有选择文件！",icon:"error"});
-        const formData = new FormData();
-        _.forEach(inputRef.current.files,(file)=>{
-            formData.append('file',file,file.name);
-        })
-        formData.append('isClear',isClear)
-        await tryFetch(()=>axios.post("/api/study-record/uploadFile",formData));
-        message.show({info:"文件上传成功！",icon:"success"});
-    }
-
-    async function download() {
-        const link = document.createElement('a');
-        link.href = "/api/study-record/downloadFile";
-        link.click();
-    }
-
-    async function add() {
-        await tryFetch(() => axios.get("/api/study-record/add"));
-    }
-
-    async function deleteByIds() {
-        if(!selection.length) return message.show({info:"请至少选择一条数据！",icon:"error"});
-        await tryFetch(() => axios.post("/api/study-record/delete", _.map(selection, x => x['_id'])));
-    }
-
-    async function tryFetch(fetch,) {
-        try {
-            await fetch();
-            query();
-        } catch (e) {
-            console.error(e.message);
-        }
-    }
 }
 
 export default StudyRecord;
@@ -114,26 +72,4 @@ function useData() {
     }, [query]);
 
     return {data, query};
-}
-
-function UploadButton({inputRef, children}) {
-    const [names, setNames] = useState([]);
-
-    return <Fragment>
-        <Button onClick={() => inputRef.current.click()}>{children}</Button>
-        {_.isEmpty(names) ? "暂无数据" : names.join('，')}
-        <input ref={inputRef}
-               type='file'
-               accept='.txt'
-               multiple
-               onChange={handleChange}
-               style={{display: 'none'}}/>
-    </Fragment>
-
-    function handleChange() {
-        const fileNames = _.map(_.get(inputRef.current, 'files', []), x => {
-            return x.name;
-        })
-        setNames(fileNames);
-    }
 }
