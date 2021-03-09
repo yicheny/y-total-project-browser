@@ -1,0 +1,66 @@
+.y-message-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position:fixed;
+  top:42px;
+  left:50%;
+  width: initial;
+  transform: translate(-50%,0%);
+  z-index:100;
+  background: transparent;
+
+  .y-message{
+    width: fit-content;
+    margin:7px 0;
+
+    .notice{
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      padding:8px 16px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px 0 rgba(0,0,0,0.16);
+      transform: translateY(0%);
+      user-select: none;
+
+      .iconfont{
+        padding-right:8px;
+        margin-bottom:-2px;
+        &.icon-success{
+          color:#52c41a;
+        }
+        &.icon-warn{
+          color:#faad14;
+        }
+        &.icon-error{
+          color:#f5222d;
+        }
+        &.icon-info{
+          color:blue;
+        }
+      }
+
+      //animation: 4500ms linear 0s 1 normal none running spin;
+      @keyframes spin{
+        0% {
+          opacity: 1;
+          transform: translateY(0%);
+        }
+        10%{
+          opacity: 1;
+          transform: translateY(-50%);
+        }
+        90%{
+          opacity: 1;
+          transform: translateY(-50%);
+        }
+        100%{
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+      }
+    }
+  }
+}

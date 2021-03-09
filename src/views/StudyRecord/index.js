@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Table,Button} from "../../components";
 import './index.scss';
 import { createTime } from "../../utils";
+import message from "../../components/Message/Message";
 
 const columns = [
     { header:"#",convert:(v,o,i)=>i+1,width: 40, align: 'center'},
@@ -39,11 +40,11 @@ function StudyRecord(props) {
 
     async function upload(){
         const file = _.head(inputRef.current.files);
-        if(!file) return alert("没有选择文件！");
+        if(!file) return message.show({info:"没有选择文件！",icon:"error"});
         const formData = new FormData();
         formData.append('file',file,file.name);
         await tryFetch(()=>axios.post("/api/study-record/uploadFile",formData));
-        alert("文件上传成功！");
+        message.show({info:"文件上传成功！",icon:"success"});
     }
 
     async function download(){
