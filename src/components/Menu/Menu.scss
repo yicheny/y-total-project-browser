@@ -1,0 +1,41 @@
+$active-back-color:#5477ff;
+
+.c-menu {
+  position: relative;
+  width: 300px;
+  min-width: 210px;
+  border-right: 1px solid #e1e1e1;
+  user-select: none;
+  background: #fff;
+
+  .c-menu-item {
+    cursor: pointer;
+    overflow: hidden;
+    > .c-menu-item-header {
+      &:hover {
+        background: #e6f7ff;
+      }
+      &.expanded{
+        >.icon-arrowDown{
+          transform: rotate(-180deg);
+        }
+      }
+      &.active{
+        background-color: $active-back-color;
+        color: white;
+      }
+
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      >.icon-arrowDown{
+        transform: rotate(0deg);
+        transition: transform 350ms
+      };
+    }
+
+    > .c-menu-sub {
+      transition: height 350ms;
+    }
+  }
+}

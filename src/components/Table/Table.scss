@@ -1,8 +1,16 @@
 .c-table{
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: #fff;
   border-radius: 4px;
+
   &-header{
     background: #fafafa;
+  }
+
+  &-content{
+    overflow: auto;
   }
 
   &-row{

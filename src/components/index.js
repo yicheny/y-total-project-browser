@@ -4,4 +4,5 @@ export {default as Icon} from './Icon/Icon';
 export {default as message} from './Message/Message';
 export {default as Modal} from './Modal/Modal';
 export {default as Switch} from './Switch/Switch';
+export {default as Menu} from './Menu/Menu';
 export {Checkbox,CheckboxGroup} from './Checkbox/Checkbox'

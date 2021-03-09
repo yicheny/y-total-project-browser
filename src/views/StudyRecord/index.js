@@ -10,7 +10,6 @@ import { useOpenInfo } from "../../hooks";
 import EditDialog from "./EditDialog";
 
 const defaultData = [];
-
 function StudyRecord(props) {
     const {data, query} = useData();
     const [selection, setSelection] = useState([]);
@@ -19,7 +18,7 @@ function StudyRecord(props) {
     const inputRef = useRef();
 
     return (<div className='study-record' style={{minWidth:932}}>
-        <div style={{marginBottom: 8,padding:"4px 0",backgroundColor:'#fff'}}>
+        <div style={{marginBottom: 12,padding:"4px 0",backgroundColor:'#fff'}}>
             <UploadButton inputRef={inputRef}>选择文件</UploadButton>
             <Button primary onClick={upload}>上传</Button>
             <Switch defaultChecked={isClear} onChange={setIsClear} checkedChildren='清空' unCheckedChildren='追加'/>
