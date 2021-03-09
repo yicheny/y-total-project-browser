@@ -82,8 +82,8 @@ function useColumns(setOpenInfo){
                 convert: v => createTime(new Date(v)).format("YYYY-MM-DD").value
             },
             {header: "时间",width:60, bind: 'time'},
-            {header: "学习信息", bind: 'info.studyInfo', width: 320, convert:v=>_.join(v,'、')},
-            {header: "复习信息", bind: 'info.reviewInfo', width: 80, convert:v=>_.join(v,'、')},
+            {header: "学习信息", bind: 'info.studyInfo', width: 420, convert:v=>_.join(v,'、')},
+            {header: "复习信息", bind: 'info.reviewInfo', width: 480, convert:v=>_.join(v,'、')},
             {header: "操作", align:'center',width:120,convert:getOperations}
         ]
 
