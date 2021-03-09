@@ -68,7 +68,7 @@ function Row({ rowData, columns, rowIndex }) {
         {
             _.map(columns, (col, i) => {
                 const { width, align, bind, convert } = getRunTimeCol(col);
-                return <Cell key={ i } width={ width } align={ align } text={ convert(rowData[ bind ],rowData,rowIndex) }/>
+                return <Cell key={ i } width={ width } align={ align } text={ convert(_.get(rowData,bind),rowData,rowIndex) }/>
             })
         }
     </div>
