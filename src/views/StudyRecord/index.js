@@ -1,7 +1,7 @@
 import React,{useEffect,useState,useCallback,useRef} from 'react';
 import _ from 'lodash';
 import axios from 'axios';
-import {Table} from "../../components";
+import {Table,Button} from "../../components";
 import './index.scss';
 import { createTime } from "../../utils";
 
@@ -26,12 +26,14 @@ function StudyRecord(props) {
     const inputRef = useRef();
 
     return (<div className='study-record'>
-            <input type='file' accept='.txt' ref={inputRef}/>
-            <button onClick={upload}>上传</button>
-            <button onClick={download}>下载</button>
-            <button onClick={add}>生成随机数据</button>
-            <button onClick={deleteByIds}>删除选中数据</button>
-            <button onClick={remove}>全部删除</button>
+            <div style={{marginBottom:8}}>
+                <input type='file' accept='.txt' ref={inputRef}/>
+                <Button primary onClick={upload}>上传</Button>
+                <Button primary onClick={download}>下载</Button>
+                <Button primary onClick={add}>生成随机数据</Button>
+                <Button primary onClick={deleteByIds}>删除选中数据</Button>
+                <Button primary onClick={remove}>全部删除</Button>
+            </div>
             <Table data={data} columns={columns} defaultSelection={defaultData} onSelectionChange={setSelection}/>
         </div>);
 
