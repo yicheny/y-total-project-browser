@@ -31,9 +31,15 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
     return <TableContext.Provider value={{selection,selectionAction}}>
         <div className={ clsx('c-table', className) } style={ style }>
             <Header data={ data } columns={ columns }/>
-            <Content data={ data } columns={ columns }/>
+            {_.isEmpty(data) ? <NoData/> : <Content data={ data } columns={ columns }/>}
         </div>
     </TableContext.Provider>
+}
+
+function NoData(){
+    return <div className='c-table-nodata'>
+        没有数据
+    </div>
 }
 
 export default Table;

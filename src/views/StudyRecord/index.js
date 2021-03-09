@@ -33,10 +33,11 @@ function StudyRecord(props) {
     </div>);
 
     async function upload() {
-        const file = _.head(inputRef.current.files);
-        if(!file) return message.show({info:"没有选择文件！",icon:"error"});
+        if(!inputRef.current.files.length) return message.show({info:"没有选择文件！",icon:"error"});
         const formData = new FormData();
-        formData.append('file',file,file.name);
+        _.forEach(inputRef.current.files,(file)=>{
+            formData.append('file',file,file.name);
+        })
         formData.append('isClear',isClear)
         await tryFetch(()=>axios.post("/api/study-record/uploadFile",formData));
         message.show({info:"文件上传成功！",icon:"success"});
@@ -53,6 +54,7 @@ function StudyRecord(props) {
     }
 
     async function deleteByIds() {
+        if(!selection.length) return message.show({info:"请至少选择一条数据！",icon:"error"});
         await tryFetch(() => axios.post("/api/study-record/delete", _.map(selection, x => x['_id'])));
     }
 
@@ -94,7 +96,7 @@ function useColumns(setOpenInfo){
             ]
             return <Operations options={options}/>
         }
-    },[setOpenInfo])
+    },[])
 }
 
 function useData() {
@@ -120,10 +122,11 @@ function UploadButton({inputRef, children}) {
 
     return <Fragment>
         <Button onClick={() => inputRef.current.click()}>{children}</Button>
-        {_.isEmpty(names) ? "暂无数据" : names.join(',')}
+        {_.isEmpty(names) ? "暂无数据" : names.join('，')}
         <input ref={inputRef}
                type='file'
                accept='.txt'
+               multiple
                onChange={handleChange}
                style={{display: 'none'}}/>
     </Fragment>
