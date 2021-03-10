@@ -7,7 +7,14 @@ import TableContext from "./TableContext";
 import { getRunTimeColumns } from "./utils";
 
 function getRunTimeOption(option) {
-    return option || {}
+    return _.defaults(option, {
+        fixedLeft: 0,
+        rightLeft: 0,
+        virtualized: true,
+        fill: false,
+        virtualizedCount:40,
+        rowHeight:35
+    })
 }
 
 function Table({ columns, data, className, style, defaultSelection, onSelectionChange, option }) {
@@ -33,11 +40,11 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
 
     updateXScrollOffset(runtime, contentRef);
 
-    useResize(tableRef,runtime_columns,runtime_option.fill);
+    useResize(tableRef, runtime_columns, runtime_option.fill);
 
     // console.log(runtime_columns);
     // console.log('runtime',runtime.current);
-    return <TableContext.Provider value={ { selection, selectionAction } }>
+    return <TableContext.Provider value={ { selection, selectionAction, option:runtime_option } }>
         <div className={ clsx('c-table', className) }
              style={ style }
              ref={ tableRef }>
@@ -47,51 +54,52 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
                     headerRef={ headerRef }/>
             { _.isEmpty(data) ? <NoData/> : <Content data={ data }
                                                      columns={ runtime_columns }
+                                                     option={ runtime_option }
                                                      contentRef={ contentRef }
                                                      setXOffset={ setXOffset }/> }
         </div>
     </TableContext.Provider>
 }
 
-function useResize(tableRef,runtime_columns,fill){
-    return useEffect(()=>{
-        if(tableRef.current) return resizeObserverInit(tableRef.current)
+function useResize(tableRef, runtime_columns, fill) {
+    return useEffect(() => {
+        if (tableRef.current) return resizeObserverInit(tableRef.current)
 
-        function resizeObserverInit(tableElement){
-            const resizeObserver = new window.ResizeObserver(()=>{
-                if(!fill) return ;
+        function resizeObserverInit(tableElement) {
+            const resizeObserver = new window.ResizeObserver(() => {
+                if (!fill) return;
                 const columns = mergeColumns(runtime_columns);
                 const sourceSumWidth = getSourceSumWidth(columns)
                 const tableWidth = getTableWidth();
-                if(tableWidth <= sourceSumWidth) return ;
-                const runTimeSumWidth = _.max([sourceSumWidth,tableWidth]);
+                if (tableWidth <= sourceSumWidth) return;
+                const runTimeSumWidth = _.max([sourceSumWidth, tableWidth]);
                 const rate = getRate();
-                columns.forEach(x=>{
+                columns.forEach(x => {
                     x.rWidth = x.width * rate;
                 })
 
-                function getRate(){
-                    return runTimeSumWidth/sourceSumWidth;
+                function getRate() {
+                    return runTimeSumWidth / sourceSumWidth;
                 }
 
-                function getTableWidth(){
+                function getTableWidth() {
                     return tableElement.getBoundingClientRect().width;
                 }
 
-                function getSourceSumWidth(columns){
-                    return _.sumBy(columns,x=>x.width);
+                function getSourceSumWidth(columns) {
+                    return _.sumBy(columns, x => x.width);
                 }
 
-                function mergeColumns(s){
-                    return _.reduce(s,(acc,x)=>acc.concat(x),[])
+                function mergeColumns(s) {
+                    return _.reduce(s, (acc, x) => acc.concat(x), [])
                 }
             });
             resizeObserver.observe(tableElement);
-            return ()=>{
+            return () => {
                 resizeObserver.unobserve(tableElement);
             };
         }
-    },[tableRef,runtime_columns,fill])
+    }, [tableRef, runtime_columns, fill])
 }
 
 function updateXScrollOffset(runtime, contentRef) {

@@ -11,7 +11,7 @@
 - [x] `Table`实现左右固定
 - [x] `Table`实现自适应伸缩 
 - [ ] `Table`添加`Tooltip`
-- [ ] `Table`实现虚拟化表格
+- [x] `Table`实现虚拟化
 - [ ] `Table`实现统计行
 - [ ] `Table` 实现表格排序
 - [ ] 实现分页器

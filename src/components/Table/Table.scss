@@ -5,12 +5,15 @@
   border-radius: 4px;
 
   &-header{
-    background: #fafafa;
     position:relative;
+    display: flex;
     &-main{
       display: flex;
       overflow: hidden;
       position:relative;
+      .c-table-cell{
+        background: #fafafa;
+      }
       .scrollbar{
         flex:none;
         background: #fafafa;
@@ -23,15 +26,16 @@
   }
 
   &-content{
-    overflow: hidden;
     display: flex;
     position:relative;
+    overflow: auto;
     &-main{
-      overflow: auto;
+      position:relative;
     }
   }
 
   &-row{
+    position:absolute;
     display: flex;
   }
 
@@ -56,7 +60,6 @@
     }
     padding: 0 8px;
     flex:none;
-    height:35px;
     display: flex;
     align-items: center;
     justify-content: left;

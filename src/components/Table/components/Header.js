@@ -10,7 +10,7 @@ export default function Header({ data,columns,headerRef,runtime }) {
     const {xScrollOffset} = runtime.current;
 
     // console.log('xScrollOffset', xScrollOffset);
-    return <div className="c-table-header c-table-row">
+    return <div className="c-table-header">
         <div className="c-table-header-main" ref={headerRef}>
             <CellGroup columns={columns.fixedLeftColumns} fixedLeft data={data}/>
             <CellGroup columns={columns.normalColumns} data={data}/>

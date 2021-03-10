@@ -33,6 +33,7 @@ function useTableOption(){
     return useMemo(()=>{
         return {
             fill:true,
+            virtualized:true,
             fixedLeftCount:2,
             fixedRightCount:1
         }
