@@ -2,27 +2,37 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
   border-radius: 4px;
 
   &-header{
     background: #fafafa;
-    position: relative;
-    z-index: 1;
+    position:relative;
     &-main{
-      position: relative;
       display: flex;
       overflow: hidden;
+      position:relative;
     }
   }
 
   &-content{
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    position:relative;
+    &-main{
+      overflow: auto;
+    }
   }
 
   &-row{
     display: flex;
-    border-bottom:1px solid #f0f0f0;
+  }
+
+  &-cell-group{
+    &.fixedLeft{
+      position:sticky;
+      left:0;
+    }
+    display: flex;
   }
 
   &-cell{
@@ -39,7 +49,9 @@
     align-items: center;
     justify-content: left;
     box-sizing: border-box;
+    background: #fff;
     border-right:1px solid #f0f0f0;
+    border-bottom:1px solid #f0f0f0;
     overflow: hidden;
     text-overflow:ellipsis;
     white-space:nowrap;

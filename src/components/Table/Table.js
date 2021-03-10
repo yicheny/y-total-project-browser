@@ -1,42 +1,68 @@
-import React, { createContext,useContext,useState,useEffect,useCallback,useRef,useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import _ from 'lodash';
 import clsx from "clsx";
 import './Table.scss';
-import { Checkbox } from "..";
+import { Content, Header } from "./components";
+import TableContext from "./TableContext";
 
-const TableContext = createContext({});
-
-function getRunTimeColumns(columns) {
-    return _.map(columns,setDefaultProp);
-
-    function setDefaultProp(col){
-        if(col.selection) return setSelectionCol();
-        return setNormalCol();
-
-        function setNormalCol(){
-            return _.assign({
-                width: 100,
-                convert:v=>v
-            }, col);
+function getRunTimeColumns(columns,option) {
+    const {fixedLeftCount} = option;
+    if(fixedLeftCount){
+        return {
+            fixedLeftColumns: setDefaultProp(columns.slice(0,fixedLeftCount)),
+            normalColumns: setDefaultProp(columns.slice(fixedLeftCount,Infinity)),
         }
+    }else{
+        return {
+            fixedLeftColumns:[],
+            normalColumns:setDefaultProp(columns)
+        }
+    }
 
-        function setSelectionCol(){
-            return _.assign({
-                width: 40,
-                align: 'center',
-            },col);
+    function setDefaultProp(columns){
+        return _.map(columns,setOneDefaultProp)
+
+        function setOneDefaultProp(col,index){
+            if(col.selection) return setSelectionCol();
+            return setNormalCol();
+
+            function setNormalCol(){
+                return _.assign({
+                    width: 100,
+                    convert:v=>v,
+                    className:getClassName()
+                }, col);
+            }
+
+            function setSelectionCol(){
+                return _.assign({
+                    width: 40,
+                    align: 'center',
+                    className: getClassName()
+                },col);
+            }
+
+            function getClassName(){
+                return {
+                    fixed:index < fixedLeftCount
+                }
+            }
         }
     }
 }
 
-function Table({ columns, data, className, style, defaultSelection, onSelectionChange,fixedLeft }) {
+function getRunTimeOption(option){
+    return option || {}
+}
+
+function Table({ columns, data, className, style, defaultSelection, onSelectionChange,option }) {
     const [selection,selectionAction] = useSelection(defaultSelection);
-    const tableRef = useRef();
     const contentRef = useRef();
     const headerRef = useRef();
     const runtime = useRef({});
 
-    const runtime_columns = useMemo(()=>getRunTimeColumns(columns),[columns]);
+    const runtime_option = useMemo(()=>getRunTimeOption(option),[option]);
+    const runtime_columns = useMemo(()=>getRunTimeColumns(columns,runtime_option),[columns,runtime_option]);
 
     const {clear} = selectionAction;
     useEffect(()=>{
@@ -49,17 +75,17 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
         }
     },[selection,onSelectionChange]);
 
-    const runtimeStatus = new RuntimeStatus({columns:runtime_columns, runtime, contentRef});
-    runtimeStatus.updateVScroll();
-    runtimeStatus.updateFixedLeft(fixedLeft);
+    const runtimeStatus = new RuntimeStatus({runtime, contentRef});
+    runtimeStatus.updateXScrollOffset();
 
-    console.log(runtime.current);
+    // console.log(runtime_columns);
+    // console.log('runtime',runtime.current);
 
     return <TableContext.Provider value={{selection,selectionAction}}>
-        <div className={ clsx('c-table', className) } style={ style } ref={tableRef}>
+        <div className={ clsx('c-table', className) } style={ style }>
             <Header data={ data }
+                    runtime={runtime}
                     columns={ runtime_columns }
-                    vScroll={runtime.current.vScroll}
                     headerRef={headerRef}/>
             {_.isEmpty(data) ? <NoData/> : <Content data={ data }
                                                     columns={ runtime_columns }
@@ -76,26 +102,20 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
 }
 
 class RuntimeStatus{
-    constructor({columns, runtime, contentRef}) {
-        this._columns = columns;
+    constructor({runtime, contentRef}) {
         this._runtime = runtime;
         this._contentRef = contentRef;
     }
 
-    updateVScroll(){
+    updateXScrollOffset(){
         if (this._contentRef.current) {
             const content = this._contentRef.current;
             if (content.scrollHeight > content.clientHeight){
-                this._runtime.current.vScroll = content.offsetWidth - content.clientWidth;
+                this._runtime.current.xScrollOffset = content.offsetWidth - content.clientWidth;
             } else {
-                this._runtime.current.vScroll = 0
+                this._runtime.current.xScrollOffset = 0
             }
         }
-    }
-
-    updateFixedLeft(fixedLeftCount){
-        const fixedLeftCols = this._columns.slice(0,fixedLeftCount);
-        this._runtime.current.fixedLeft = _.reduce(fixedLeftCols,(acc,x)=>acc+x.width,0);
     }
 }
 
@@ -106,54 +126,6 @@ function NoData(){
 }
 
 export default Table;
-
-function Header({ data,columns,headerRef,vScroll }) {
-    const {selectionAction} = useContext(TableContext);
-
-    return <div className="c-table-header c-table-row">
-        <div className="c-table-header-main" ref={headerRef}>
-            {
-                _.map(columns, (col, i) => {
-                    const { width, align, header } = col;
-                    if(col.selection) return <SelectCell key={i} onChange={()=>selectionAction.selectAll(data)}
-                                                         width={width} align={align}
-                                                         checked={selectionAction.isSelectAll(data)}/>;
-                    return <Cell key={ i } width={ width } align={ align } text={ header }/>
-                })
-            }
-            {vScroll > 0 && <div className="scrollbar" style={{ width: vScroll,flex:'none'}} />}
-        </div>
-    </div>
-}
-
-
-function Content({ data, columns, contentRef,setXOffset }) {
-    return <div className="c-table-content" ref={contentRef} onScroll={handleScroll}>
-        { _.map(data, (o, i) => {
-            return <Row key={ i } rowData={ o } columns={ columns } rowIndex={i}/>
-        }) }
-    </div>;
-
-    function handleScroll(e){
-        setXOffset(e.target.scrollLeft);
-    }
-}
-
-function Row({ rowData, columns, rowIndex }) {
-    const {selectionAction} = useContext(TableContext);
-
-    return <div className="c-table-row">
-        {
-            _.map(columns, (col, i) => {
-                const { width, align, bind, convert } = col;
-                if(col.selection) return <SelectCell key={i} onChange={()=>selectionAction.selectOne(rowData)}
-                                                     width={width} align={align}
-                                                     checked={selectionAction.has(rowData)}/>;
-                return <Cell key={ i } width={ width } align={ align } text={ convert(_.get(rowData,bind),rowData,rowIndex) }/>
-            })
-        }
-    </div>
-}
 
 function useSelection(defaultSelection){
     const [selection,setSelection] = useState(defaultSelection);
@@ -185,23 +157,4 @@ function useSelection(defaultSelection){
     },[isSelectAll])
 
     return [selection,{clear,selectOne,selectAll,has,isSelectAll}]
-}
-
-function Cell({ text, width, align,onClick }) {
-    return <div className={clsx("c-table-cell",align)} style={ { width } } onClick={handleClick}>
-        { text }
-    </div>
-
-    function handleClick(){
-        _.isFunction(onClick) && onClick();
-    }
-}
-Cell.defaultProps = {
-    align:'left',
-}
-
-function SelectCell({onChange,checked,...rest}){
-    const {selection} = useContext(TableContext);
-    if(!selection) return null;
-    return <Cell text={ <Checkbox checked={checked} onChange={onChange}/>} {...rest}/>;
 }
