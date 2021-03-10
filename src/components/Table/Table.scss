@@ -11,6 +11,13 @@
       display: flex;
       overflow: hidden;
       position:relative;
+      .scrollbar{
+        flex:none;
+        &.fixedRight{
+          position:sticky;
+          right:0;
+        }
+      }
     }
   }
 
@@ -31,6 +38,10 @@
     &.fixedLeft{
       position:sticky;
       left:0;
+    }
+    &.fixedRight{
+      position:sticky;
+      right:0;
     }
     display: flex;
   }

@@ -20,18 +20,18 @@ export default function Content({ data, columns, contentRef,setXOffset }) {
 }
 
 function Row({  columns, ...rest }) {
-    const {normalColumns,fixedLeftColumns} = columns;
 
     return <div className="c-table-row">
-        <CellGroup columns={fixedLeftColumns} fixedLeft {...rest}/>
-        <CellGroup columns={normalColumns} {...rest}/>
+        <CellGroup columns={columns.fixedLeftColumns} fixedLeft {...rest}/>
+        <CellGroup columns={columns.normalColumns} {...rest}/>
+        <CellGroup columns={columns.fixedRightColumns} fixedRight {...rest}/>
     </div>
 }
 
-function CellGroup({columns,fixedLeft,rowData,rowIndex}){
+function CellGroup({columns,fixedLeft,fixedRight,rowData,rowIndex}){
     const {selectionAction} = useContext(TableContext);
 
-    return <div className={clsx('c-table-cell-group',{fixedLeft})}>
+    return <div className={clsx('c-table-cell-group',{fixedLeft,fixedRight})}>
         {
             _.map(columns, (col, i) => {
                 const { bind, convert } = col;

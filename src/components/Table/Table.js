@@ -6,23 +6,48 @@ import { Content, Header } from "./components";
 import TableContext from "./TableContext";
 
 function getRunTimeColumns(columns,option) {
-    const {fixedLeftCount} = option;
-    if(fixedLeftCount){
-        return {
-            fixedLeftColumns: setDefaultProp(columns.slice(0,fixedLeftCount)),
-            normalColumns: setDefaultProp(columns.slice(fixedLeftCount,Infinity)),
-        }
-    }else{
+    const {fixedLeftCount,fixedRightCount} = option;
+    if(!fixedLeftCount && !fixedRightCount) return getNoLeftAndNoRightColumns();
+    if(fixedLeftCount && !fixedRightCount) return getHasLeftAndNoRightColumns();
+    if(!fixedLeftCount && fixedRightCount) return getNoLeftAndHasRightColumns();
+    return getHasLeftAndHasRightColumns();
+
+    function getNoLeftAndNoRightColumns(){
         return {
             fixedLeftColumns:[],
-            normalColumns:setDefaultProp(columns)
+            normalColumns:setDefaultProp(columns),
+            fixedRightColumns:[]
+        };
+    }
+
+    function getHasLeftAndNoRightColumns(){
+        return {
+            fixedLeftColumns: setDefaultProp(columns.slice(0,fixedLeftCount)),
+            normalColumns: setDefaultProp(columns.slice(fixedLeftCount)),
+            fixedRightColumns:[]
+        }
+    }
+
+    function getNoLeftAndHasRightColumns(){
+        return {
+            fixedLeftColumns:[],
+            normalColumns: setDefaultProp(columns.slice(0,fixedRightCount)),
+            fixedRightColumns: setDefaultProp(columns.slice(fixedRightCount*-1)),
+        }
+    }
+
+    function getHasLeftAndHasRightColumns(){
+        return {
+            fixedLeftColumns:setDefaultProp(columns.slice(0,fixedLeftCount)),
+            normalColumns: setDefaultProp(columns.slice(fixedLeftCount,fixedRightCount*-1)),
+            fixedRightColumns: setDefaultProp(columns.slice(fixedRightCount*-1)),
         }
     }
 
     function setDefaultProp(columns){
         return _.map(columns,setOneDefaultProp)
 
-        function setOneDefaultProp(col,index){
+        function setOneDefaultProp(col){
             if(col.selection) return setSelectionCol();
             return setNormalCol();
 
@@ -30,7 +55,6 @@ function getRunTimeColumns(columns,option) {
                 return _.assign({
                     width: 100,
                     convert:v=>v,
-                    className:getClassName()
                 }, col);
             }
 
@@ -38,14 +62,7 @@ function getRunTimeColumns(columns,option) {
                 return _.assign({
                     width: 40,
                     align: 'center',
-                    className: getClassName()
                 },col);
-            }
-
-            function getClassName(){
-                return {
-                    fixed:index < fixedLeftCount
-                }
             }
         }
     }
