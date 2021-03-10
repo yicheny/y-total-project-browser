@@ -32,6 +32,7 @@ export default StudyRecord;
 function useTableOption(){
     return useMemo(()=>{
         return {
+            fill:true,
             fixedLeftCount:2,
             fixedRightCount:1
         }

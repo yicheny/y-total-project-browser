@@ -13,6 +13,7 @@
       position:relative;
       .scrollbar{
         flex:none;
+        background: #fafafa;
         &.fixedRight{
           position:sticky;
           right:0;

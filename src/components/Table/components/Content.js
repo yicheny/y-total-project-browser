@@ -20,7 +20,6 @@ export default function Content({ data, columns, contentRef,setXOffset }) {
 }
 
 function Row({  columns, ...rest }) {
-
     return <div className="c-table-row">
         <CellGroup columns={columns.fixedLeftColumns} fixedLeft {...rest}/>
         <CellGroup columns={columns.normalColumns} {...rest}/>
