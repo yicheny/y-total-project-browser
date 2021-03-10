@@ -13,9 +13,8 @@ export default function Content({ data, columns, contentRef, setXOffset, option 
         return _.slice(data, topElementCount, topElementCount + virtualizedCount);
     }, [data, topElementCount, virtualizedCount]);
 
-    return <div className="c-table-content" onScroll={ handleScroll }>
+    return <div className="c-table-content" onScroll={ handleScroll } ref={ contentRef }>
         <div className="c-table-content-main"
-             ref={ contentRef }
              style={{height:(data.length * rowHeight)}}>
             { _.map(renderRows, (o, i) => {
                 const index = i+topElementCount;

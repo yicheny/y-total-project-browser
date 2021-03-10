@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo,useReducer } from 'react';
 import _ from 'lodash';
 import clsx from "clsx";
 import './Table.scss';
@@ -20,6 +20,7 @@ function getRunTimeOption(option) {
 function Table({ columns, data, className, style, defaultSelection, onSelectionChange, option }) {
     const [selection, selectionAction] = useSelection(defaultSelection);
     const { headerRef, setXOffset } = useHeaderRef();
+    const forceUpdate = useForceUpdate();
     const tableRef = useRef();
     const contentRef = useRef();
     const runtime = useRef({});
@@ -40,7 +41,7 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
 
     updateXScrollOffset(runtime, contentRef);
 
-    useResize(tableRef, runtime_columns, runtime_option.fill);
+    useResize(tableRef, runtime_columns, runtime_option.fill,forceUpdate);
 
     // console.log(runtime_columns);
     // console.log('runtime',runtime.current);
@@ -61,7 +62,7 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
     </TableContext.Provider>
 }
 
-function useResize(tableRef, runtime_columns, fill) {
+function useResize(tableRef, runtime_columns, fill,forceUpdate) {
     return useEffect(() => {
         if (tableRef.current) return resizeObserverInit(tableRef.current)
 
@@ -76,7 +77,8 @@ function useResize(tableRef, runtime_columns, fill) {
                 const rate = getRate();
                 columns.forEach(x => {
                     x.rWidth = x.width * rate;
-                })
+                });
+                forceUpdate();
 
                 function getRate() {
                     return runTimeSumWidth / sourceSumWidth;
@@ -99,7 +101,7 @@ function useResize(tableRef, runtime_columns, fill) {
                 resizeObserver.unobserve(tableElement);
             };
         }
-    }, [tableRef, runtime_columns, fill])
+    }, [tableRef, runtime_columns, fill,forceUpdate])
 }
 
 function updateXScrollOffset(runtime, contentRef) {
@@ -162,4 +164,10 @@ function useHeaderRef() {
     }, [])
 
     return { headerRef, setXOffset }
+}
+
+function useForceUpdate(){
+    const [,forceUpdate] = useReducer(x=>x+1,0);
+
+    return forceUpdate;
 }
