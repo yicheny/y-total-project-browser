@@ -3,15 +3,19 @@
   flex-direction: column;
   overflow: hidden;
   border-radius: 4px;
+  background: #fff;
 
   &-header{
     position:relative;
     display: flex;
+    background: #fafafa;
+    border-bottom:1px solid #f0f0f0;
     &-main{
       display: flex;
       overflow: hidden;
       position:relative;
       .c-table-cell{
+        border-bottom: none;
         background: #fafafa;
       }
       .scrollbar{
@@ -26,8 +30,6 @@
   }
 
   &-content{
-    display: flex;
-    position:relative;
     overflow: auto;
     &-main{
       position:relative;

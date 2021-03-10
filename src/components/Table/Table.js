@@ -62,6 +62,56 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
     </TableContext.Provider>
 }
 
+export default Table;
+
+function useSelection(defaultSelection) {
+    const [selection, setSelection] = useState(defaultSelection);
+
+    const clear = useCallback(() => setSelection([]), []);
+
+    const has = useCallback((o) => _.includes(selection, o), [selection])
+
+    const selectOne = useCallback((o) => {
+        if (has(o)) {
+            _.pull(selection, o);
+        } else {
+            selection.push(o);
+        }
+        setSelection(_.clone(selection));
+    }, [has, selection])
+
+    const isSelectAll = useCallback((data) => {
+        if (!_.get(data, 'length')) return false;
+        if (!_.isArray(selection)) return false;
+        return selection.length === data.length;
+    }, [selection])
+
+    const selectAll = useCallback((data) => {
+        if (isSelectAll(data)) {
+            return setSelection([])
+        }
+        setSelection(_.clone(data));
+    }, [isSelectAll])
+
+    return [selection, { clear, selectOne, selectAll, has, isSelectAll }]
+}
+
+function useHeaderRef() {
+    const headerRef = useRef();
+    const setXOffset = useCallback((offset) => {
+        if (headerRef.current) {
+            headerRef.current.scrollLeft = offset;
+        }
+    }, [])
+
+    return { headerRef, setXOffset }
+}
+
+function useForceUpdate(){
+    const [,forceUpdate] = useReducer(x=>x+1,0);
+    return forceUpdate;
+}
+
 function useResize(tableRef, runtime_columns, fill,forceUpdate) {
     return useEffect(() => {
         if (tableRef.current) return resizeObserverInit(tableRef.current)
@@ -119,55 +169,4 @@ function NoData() {
     return <div className='c-table-nodata'>
         没有数据
     </div>
-}
-
-export default Table;
-
-function useSelection(defaultSelection) {
-    const [selection, setSelection] = useState(defaultSelection);
-
-    const clear = useCallback(() => setSelection([]), []);
-
-    const has = useCallback((o) => _.includes(selection, o), [selection])
-
-    const selectOne = useCallback((o) => {
-        if (has(o)) {
-            _.pull(selection, o);
-        } else {
-            selection.push(o);
-        }
-        setSelection(_.clone(selection));
-    }, [has, selection])
-
-    const isSelectAll = useCallback((data) => {
-        if (!_.get(data, 'length')) return false;
-        if (!_.isArray(selection)) return false;
-        return selection.length === data.length;
-    }, [selection])
-
-    const selectAll = useCallback((data) => {
-        if (isSelectAll(data)) {
-            return setSelection([])
-        }
-        setSelection(_.clone(data));
-    }, [isSelectAll])
-
-    return [selection, { clear, selectOne, selectAll, has, isSelectAll }]
-}
-
-function useHeaderRef() {
-    const headerRef = useRef();
-    const setXOffset = useCallback((offset) => {
-        if (headerRef.current) {
-            headerRef.current.scrollLeft = offset;
-        }
-    }, [])
-
-    return { headerRef, setXOffset }
-}
-
-function useForceUpdate(){
-    const [,forceUpdate] = useReducer(x=>x+1,0);
-
-    return forceUpdate;
 }
