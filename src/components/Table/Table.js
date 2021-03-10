@@ -1,4 +1,4 @@
-import React, { createContext,useContext,useState,useEffect,useCallback,useRef } from 'react';
+import React, { createContext,useContext,useState,useEffect,useCallback,useRef,useMemo } from 'react';
 import _ from 'lodash';
 import clsx from "clsx";
 import './Table.scss';
@@ -6,12 +6,27 @@ import { Checkbox } from "..";
 
 const TableContext = createContext({});
 
-function getRunTimeCol(col) {
-    return _.assign({
-        width: 100,
-        align: 'left',
-        convert: v => v,
-    }, col);
+function getRunTimeColumns(columns) {
+    return _.map(columns,setDefaultProp);
+
+    function setDefaultProp(col){
+        if(col.selection) return setSelectionCol();
+        return setNormalCol();
+
+        function setNormalCol(){
+            return _.assign({
+                width: 100,
+                convert:v=>v
+            }, col);
+        }
+
+        function setSelectionCol(){
+            return _.assign({
+                width: 40,
+                align: 'center',
+            },col);
+        }
+    }
 }
 
 function Table({ columns, data, className, style, defaultSelection, onSelectionChange,fixedLeft }) {
@@ -20,6 +35,8 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
     const contentRef = useRef();
     const headerRef = useRef();
     const runtime = useRef({});
+
+    const runtime_columns = useMemo(()=>getRunTimeColumns(columns),[columns]);
 
     const {clear} = selectionAction;
     useEffect(()=>{
@@ -32,16 +49,20 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
         }
     },[selection,onSelectionChange]);
 
-    updateState(columns, runtime, contentRef);
+    const runtimeStatus = new RuntimeStatus({columns:runtime_columns, runtime, contentRef});
+    runtimeStatus.updateVScroll();
+    runtimeStatus.updateFixedLeft(fixedLeft);
+
+    console.log(runtime.current);
 
     return <TableContext.Provider value={{selection,selectionAction}}>
         <div className={ clsx('c-table', className) } style={ style } ref={tableRef}>
             <Header data={ data }
-                    columns={ columns }
+                    columns={ runtime_columns }
                     vScroll={runtime.current.vScroll}
                     headerRef={headerRef}/>
             {_.isEmpty(data) ? <NoData/> : <Content data={ data }
-                                                    columns={ columns }
+                                                    columns={ runtime_columns }
                                                     contentRef={contentRef}
                                                     setXOffset={setXOffset}/>}
         </div>
@@ -54,15 +75,27 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
     }
 }
 
-function updateState(columns, runtime, ref){
-    if (ref.current) {
-        const content = ref.current;
-        if (content.scrollHeight > content.clientHeight){
-            runtime.current.vScroll = content.offsetWidth - content.clientWidth;
-        } else {
-            runtime.current.vScroll = 0
+class RuntimeStatus{
+    constructor({columns, runtime, contentRef}) {
+        this._columns = columns;
+        this._runtime = runtime;
+        this._contentRef = contentRef;
+    }
+
+    updateVScroll(){
+        if (this._contentRef.current) {
+            const content = this._contentRef.current;
+            if (content.scrollHeight > content.clientHeight){
+                this._runtime.current.vScroll = content.offsetWidth - content.clientWidth;
+            } else {
+                this._runtime.current.vScroll = 0
+            }
         }
-        // console.log('runtime.current.vScroll',runtime.current.vScroll);
+    }
+
+    updateFixedLeft(fixedLeftCount){
+        const fixedLeftCols = this._columns.slice(0,fixedLeftCount);
+        this._runtime.current.fixedLeft = _.reduce(fixedLeftCols,(acc,x)=>acc+x.width,0);
     }
 }
 
@@ -79,10 +112,12 @@ function Header({ data,columns,headerRef,vScroll }) {
 
     return <div className="c-table-header c-table-row">
         <div className="c-table-header-main" ref={headerRef}>
-            <SelectCell onChange={()=>selectionAction.selectAll(data)} checked={selectionAction.isSelectAll(data)}/>
             {
                 _.map(columns, (col, i) => {
-                    const { width, align, header } = getRunTimeCol(col);
+                    const { width, align, header } = col;
+                    if(col.selection) return <SelectCell key={i} onChange={()=>selectionAction.selectAll(data)}
+                                                         width={width} align={align}
+                                                         checked={selectionAction.isSelectAll(data)}/>;
                     return <Cell key={ i } width={ width } align={ align } text={ header }/>
                 })
             }
@@ -108,10 +143,12 @@ function Row({ rowData, columns, rowIndex }) {
     const {selectionAction} = useContext(TableContext);
 
     return <div className="c-table-row">
-        <SelectCell onChange={()=>selectionAction.selectOne(rowData)} checked={selectionAction.has(rowData)}/>
         {
             _.map(columns, (col, i) => {
-                const { width, align, bind, convert } = getRunTimeCol(col);
+                const { width, align, bind, convert } = col;
+                if(col.selection) return <SelectCell key={i} onChange={()=>selectionAction.selectOne(rowData)}
+                                                     width={width} align={align}
+                                                     checked={selectionAction.has(rowData)}/>;
                 return <Cell key={ i } width={ width } align={ align } text={ convert(_.get(rowData,bind),rowData,rowIndex) }/>
             })
         }
@@ -159,9 +196,12 @@ function Cell({ text, width, align,onClick }) {
         _.isFunction(onClick) && onClick();
     }
 }
+Cell.defaultProps = {
+    align:'left',
+}
 
-function SelectCell({onChange,checked}){
+function SelectCell({onChange,checked,...rest}){
     const {selection} = useContext(TableContext);
     if(!selection) return null;
-    return <Cell width={ 40 } align={ 'center' } text={ <Checkbox checked={checked} onChange={onChange}/>}/>;
+    return <Cell text={ <Checkbox checked={checked} onChange={onChange}/>} {...rest}/>;
 }

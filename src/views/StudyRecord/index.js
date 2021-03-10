@@ -32,6 +32,7 @@ export default StudyRecord;
 function useColumns(setOpenInfo){
     return useMemo(()=>{
         return [
+            { selection: true },
             {header: "#", convert: (v, o, i) => i + 1, width: 40, align: 'center'},
             // {header: "id", bind: "_id", width: 240,},
             {
