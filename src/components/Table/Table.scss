@@ -7,6 +7,13 @@
 
   &-header{
     background: #fafafa;
+    position: relative;
+    z-index: 1;
+    &-main{
+      position: relative;
+      display: flex;
+      overflow: hidden;
+    }
   }
 
   &-content{

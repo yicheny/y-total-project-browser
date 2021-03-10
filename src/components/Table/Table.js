@@ -1,4 +1,4 @@
-import React, { createContext,useContext,useState,useEffect,useCallback } from 'react';
+import React, { createContext,useContext,useState,useEffect,useCallback,useRef } from 'react';
 import _ from 'lodash';
 import clsx from "clsx";
 import './Table.scss';
@@ -14,13 +14,17 @@ function getRunTimeCol(col) {
     }, col);
 }
 
-function Table({ columns, data, className, style, defaultSelection, onSelectionChange }) {
+function Table({ columns, data, className, style, defaultSelection, onSelectionChange,fixedLeft }) {
     const [selection,selectionAction] = useSelection(defaultSelection);
+    const tableRef = useRef();
+    const contentRef = useRef();
+    const headerRef = useRef();
+    const runtime = useRef({});
 
-    const { clear } = selectionAction;
+    const {clear} = selectionAction;
     useEffect(()=>{
         clear();
-    },[data,clear])
+    },[clear,data]);//注意这里的data，删除这个依赖会有bug
 
     useEffect(()=>{
         if(selection) {
@@ -28,12 +32,38 @@ function Table({ columns, data, className, style, defaultSelection, onSelectionC
         }
     },[selection,onSelectionChange]);
 
+    updateState(columns, runtime, contentRef);
+
     return <TableContext.Provider value={{selection,selectionAction}}>
-        <div className={ clsx('c-table', className) } style={ style }>
-            <Header data={ data } columns={ columns }/>
-            {_.isEmpty(data) ? <NoData/> : <Content data={ data } columns={ columns }/>}
+        <div className={ clsx('c-table', className) } style={ style } ref={tableRef}>
+            <Header data={ data }
+                    columns={ columns }
+                    vScroll={runtime.current.vScroll}
+                    headerRef={headerRef}/>
+            {_.isEmpty(data) ? <NoData/> : <Content data={ data }
+                                                    columns={ columns }
+                                                    contentRef={contentRef}
+                                                    setXOffset={setXOffset}/>}
         </div>
     </TableContext.Provider>
+
+    function setXOffset(offset) {
+        if (headerRef.current){
+            headerRef.current.scrollLeft = offset;
+        }
+    }
+}
+
+function updateState(columns, runtime, ref){
+    if (ref.current) {
+        const content = ref.current;
+        if (content.scrollHeight > content.clientHeight){
+            runtime.current.vScroll = content.offsetWidth - content.clientWidth;
+        } else {
+            runtime.current.vScroll = 0
+        }
+        // console.log('runtime.current.vScroll',runtime.current.vScroll);
+    }
 }
 
 function NoData(){
@@ -44,26 +74,34 @@ function NoData(){
 
 export default Table;
 
-function Header({ data,columns }) {
+function Header({ data,columns,headerRef,vScroll }) {
     const {selectionAction} = useContext(TableContext);
 
     return <div className="c-table-header c-table-row">
-        <SelectCell onChange={()=>selectionAction.selectAll(data)} checked={selectionAction.isSelectAll(data)}/>
-        {
-            _.map(columns, (col, i) => {
-                const { width, align, header } = getRunTimeCol(col);
-                return <Cell key={ i } width={ width } align={ align } text={ header }/>
-            })
-        }
+        <div className="c-table-header-main" ref={headerRef}>
+            <SelectCell onChange={()=>selectionAction.selectAll(data)} checked={selectionAction.isSelectAll(data)}/>
+            {
+                _.map(columns, (col, i) => {
+                    const { width, align, header } = getRunTimeCol(col);
+                    return <Cell key={ i } width={ width } align={ align } text={ header }/>
+                })
+            }
+            {vScroll > 0 && <div className="scrollbar" style={{ width: vScroll,flex:'none'}} />}
+        </div>
     </div>
 }
 
-function Content({ data, columns }) {
-    return <div className="c-table-content">
+
+function Content({ data, columns, contentRef,setXOffset }) {
+    return <div className="c-table-content" ref={contentRef} onScroll={handleScroll}>
         { _.map(data, (o, i) => {
             return <Row key={ i } rowData={ o } columns={ columns } rowIndex={i}/>
         }) }
     </div>;
+
+    function handleScroll(e){
+        setXOffset(e.target.scrollLeft);
+    }
 }
 
 function Row({ rowData, columns, rowIndex }) {

@@ -1,5 +1,11 @@
 .b-operations{
   &-item{
+    &.disabled{
+      color:#dfdfdf;
+      pointer-events: none;
+      user-select: none;
+      //cursor: none;
+    }
     color: #5477ff;
     padding: 0 4px;
     cursor: pointer;

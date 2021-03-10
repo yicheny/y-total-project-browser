@@ -19,7 +19,9 @@ function StudyRecord() {
 
     return (<div className='study-record' style={{minWidth:932}}>
         <Option data={data} selection={selection} query={query} setOpenInfo={setOpenInfo}/>
-        <Table data={data} columns={useColumns(setOpenInfo)} defaultSelection={defaultData} onSelectionChange={setSelection}/>
+        <Table data={data} columns={useColumns(setOpenInfo)}
+               fixedLeft={2}
+               defaultSelection={defaultData} onSelectionChange={setSelection}/>
         <EditDialog visible={openInfo.type === 'edit'} close={close} source={openInfo.source}/>
         <TotalDialog visible={openInfo.type === 'total'} close={close} data={data}/>
     </div>);
@@ -48,8 +50,8 @@ function useColumns(setOpenInfo){
         function getOperations(v,o,i){
             const options = [
                 // {text:"编辑",onClick:()=>setOpenInfo({type:"edit",source:_.clone(o)})},
-                {text:"编辑",onClick:()=>message.show({info:'暂时用不到的功能'})},
-                {text:"删除",onClick:()=>message.show({info:'暂时用不到的功能'})},
+                {text:"编辑",disabled: true},
+                {text:"删除",onClick:()=>message.show({info:'即将开发的部分'})},
             ]
             return <Operations options={options}/>
         }
