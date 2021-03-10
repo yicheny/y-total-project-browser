@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-class Time{
+class Index{
     constructor(time) {
         this._value = _.clone(time);
     }
@@ -25,7 +25,7 @@ class Time{
 }
 
 function createTime(...params){
-    return new Time(...params);
+    return new Index(...params);
 }
 
 function add0(num){

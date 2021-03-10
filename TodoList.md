@@ -11,11 +11,11 @@
 - [x] `Table`实现左右固定
 - [x] `Table`实现自适应伸缩 
 - [x] `Table`实现虚拟化
+- [ ] 规范API返回格式
+- [ ] 添加`loading`
 - [ ] `Table`添加`Tooltip`
 - [ ] `Table`实现统计行
-- [ ] `Table` 实现表格排序
-- [ ] 添加`loading`
-- [ ] 规范API返回格式
+- [ ] `Table`实现表格排序
 
 ## 暂缓
 - [ ] 实现分页器

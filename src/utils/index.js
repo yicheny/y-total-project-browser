@@ -1,1 +1,2 @@
-export {default as createTime} from './time/time';
+export {default as createTime} from './time';
+export {default as api} from './api';

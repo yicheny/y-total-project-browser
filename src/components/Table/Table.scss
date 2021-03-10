@@ -14,9 +14,9 @@
       display: flex;
       overflow: hidden;
       position:relative;
+      background: inherit;
       .c-table-cell{
         border-bottom: none;
-        background: #fafafa;
       }
       .scrollbar{
         flex:none;
@@ -39,6 +39,10 @@
   &-row{
     position:absolute;
     display: flex;
+    background: #fff;
+    &:hover{
+      background: #fafafa;
+    }
   }
 
   &-cell-group{
@@ -51,6 +55,7 @@
       right:0;
     }
     display: flex;
+    background: inherit;
   }
 
   &-cell{
@@ -66,7 +71,6 @@
     align-items: center;
     justify-content: left;
     box-sizing: border-box;
-    background: #fff;
     border-right:1px solid #f0f0f0;
     border-bottom:1px solid #f0f0f0;
     overflow: hidden;

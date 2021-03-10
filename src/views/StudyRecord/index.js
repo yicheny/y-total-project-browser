@@ -19,8 +19,7 @@ function StudyRecord() {
 
     return (<div className='study-record' style={{minWidth:932}}>
         <Option data={data} selection={selection} query={query} setOpenInfo={setOpenInfo}/>
-        <Table data={data} columns={useColumns(setOpenInfo)}
-               option={useTableOption()}
+        <Table data={data} columns={useColumns(setOpenInfo)} option={useTableOption()}
                defaultSelection={defaultData} onSelectionChange={setSelection}/>
         <EditDialog visible={openInfo.type === 'edit'} close={close} source={openInfo.source}/>
         <TotalDialog visible={openInfo.type === 'total'} close={close} data={data}/>
@@ -32,7 +31,7 @@ export default StudyRecord;
 function useTableOption(){
     return useMemo(()=>{
         return {
-            // fill:true,
+            fill:true,
             virtualized:true,
             fixedLeftCount:2,
             fixedRightCount:1
