@@ -2,24 +2,26 @@ import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import _ from 'lodash';
 import { Table } from "../../components";
 import './index.scss';
-import { api, createTime } from "../../utils";
+import { createTime } from "../../utils";
 import message from "../../components/Message/Message";
-import { Operations } from "../../bizComponents";
-import { useOpenInfo } from "../../hooks";
+import { Container, Operations } from "../../bizComponents";
+import { useGet, useOpenInfo } from "../../hooks";
 import EditDialog from "./EditDialog";
 import TotalDialog from "./TotalDialog";
 import Option from "./Option";
 
 const defaultData = [];
 function StudyRecord() {
-    const {data, query} = useData();
+    const {data, query, loading, error} = useData();
     const [selection, setSelection] = useState([]);
     const {openInfo,setOpenInfo,close} = useOpenInfo();
 
     return (<div className='study-record' style={{minWidth:932}}>
         <Option data={data} selection={selection} query={query} setOpenInfo={setOpenInfo}/>
-        <Table data={data} columns={useColumns(setOpenInfo)} option={useTableOption()}
-               defaultSelection={defaultData} onSelectionChange={setSelection}/>
+        <Container loading={loading} error={error}>
+            <Table data={data} columns={useColumns(setOpenInfo)} option={useTableOption()}
+                   defaultSelection={defaultData} onSelectionChange={setSelection}/>
+        </Container>
         <EditDialog visible={openInfo.type === 'edit'} close={close} source={openInfo.source}/>
         <TotalDialog visible={openInfo.type === 'total'} close={close} data={data}/>
     </div>);
@@ -69,19 +71,17 @@ function useColumns(setOpenInfo){
 }
 
 function useData() {
-    const [data, setData] = useState([]);
+    const {data,doFetch,loading,error} = useGet();
 
     const query = useCallback(() => {
-        api.get("/study-record/query").then(res => {
-            setData(res.data)
-        }).catch(e => {
-            console.error(e.message);
-        })
-    }, [])
+        doFetch("/study-record/query");
+    }, [doFetch])
 
     useEffect(() => {
         query();
     }, [query]);
 
-    return {data, query};
+    return {data:data || [], query,loading,error};
 }
+
+

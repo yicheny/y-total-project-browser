@@ -1,0 +1,84 @@
+$primary-color:#5477ff;
+$spin-size: 20px;
+$spin-size-large: 36px;
+
+.c-loader-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.c-loader {
+    color: $primary-color;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    span.spin-dot {
+        position: relative;
+        display: inline-block;
+        font-size: $spin-size;
+        width: $spin-size;
+        height: $spin-size;
+        transform: rotate(45deg);
+        animation: looprotate 1.2s infinite linear;
+        &.large {
+            font-size: $spin-size-large;
+            width: $spin-size-large;
+            height: $spin-size-large;
+            i {
+                width: $spin-size-large/2;
+                height: $spin-size-large/2;
+            }
+        }
+        i {
+            width: $spin-size/2;
+            height: $spin-size/2;
+            border-radius: 100%;
+            background-color: $primary-color;
+            display: block;
+            position: absolute;
+            transform: scale(0.65);
+            &:nth-child(1) {
+                left: 0;
+                top: 0;
+                opacity: 1;
+            }
+            &:nth-child(2) {
+                right: 0;
+                top: 0;
+                opacity: 0.8;
+            }
+            &:nth-child(3) {
+                right: 0;
+                bottom: 0;
+                opacity: 0.6;
+            }
+            &:nth-child(4) {
+                left: 0;
+                bottom: 0;
+                opacity: 0.4;
+            }
+        }
+    }
+    span.text {
+        font-size: 14px;
+        margin-top: 10px;
+        user-select: none;
+        &.large {
+            font-size: 16px;
+        }
+    }
+    @keyframes looprotate {
+        to {
+            transform: rotate(405deg);
+        }
+    }
+}

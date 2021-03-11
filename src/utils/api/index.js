@@ -65,7 +65,7 @@ class API{
                 }
                 return reject(new Exception(Exception.API,res.code,res.message,url));
             }catch (e){
-                reject(new Exception(Exception.API,e.request.status,`HttpRequest Error：${e.message}`,url));
+                reject(new Exception(Exception.API,_.get(e,'request.status'),`HttpRequest Error：${e.message}`,url));
             }
         })
     }

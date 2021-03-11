@@ -1,0 +1,19 @@
+.b-container{
+  flex:1;
+  position:relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  //border-radius: 4px;
+  &.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &.error{
+    background: rgba(220,20,60,0.07);
+    >span{
+      color:red;
+    };
+  }
+}

@@ -12,18 +12,18 @@ export default function useGet(url) {
     const [status, actions] = useApiStatus();
     const { token } = useApiUnmount();
     const pre = usePrevious(status);
-    const update = useUpdate(pre, token, actions);
-    useAutoUpdate(url, update);
-    return { ...status, doFetch: update };
+    const request = useRequest(pre, token, actions);
+    useAutoRequest(url, request);
+    return { ...status, doFetch: request };
 }
 
-function useAutoUpdate(url, update) {
+function useAutoRequest(url, request) {
     useEffect(() => {
-        if (_.isString(url) || _.isArray(url)) update(url);
-    }, [url, update]);
+        if (_.isString(url) || _.isArray(url)) request(url);
+    }, [url, request]);
 }
 
-function useUpdate(pre, token, actions) {
+function useRequest(pre, token, actions) {
     return useCallback((url) => {
         actions.reset(pre.current);
         if (_.isArray(url)) return tryExecute(fetchUrls, actions.reject);
