@@ -16,10 +16,12 @@
     - [x] 删除
     - [x] 查询
     - [x] 上传
-- [ ] 添加`loading`
-- [ ] `Table`添加`Tooltip`
-- [ ] `Table`实现统计行
-- [ ] `Table`实现表格排序
+- [x] 添加`loading`
+- [ ] `Menu`添加伸缩功能
 
 ## 暂缓
 - [ ] 实现分页器
+- [ ] `Table`添加`Tooltip`
+- [ ] `Table`实现统计行
+- [ ] `Table`实现表格排序
+- [ ] `Table`实现宽度拉缩

@@ -33,8 +33,10 @@ export default function Option({data,query,selection,setOpenInfo}){
             formData.append('file',file,file.name);
         })
         formData.append('isClear',isClear)
-        await tryFetch(()=>api.post("/study-record/uploadFile",formData));
-        message.show({info:"文件上传成功！",icon:"success"});
+        await tryFetch(async () => {
+            await api.post("/study-record/uploadFile", formData)
+            message.show({info: "文件上传成功！", icon: "success"});
+        })
     }
 
     async function download() {
@@ -55,7 +57,7 @@ export default function Option({data,query,selection,setOpenInfo}){
             await fetch();
             query();
         } catch (e) {
-            console.error(e.message);
+            console.error('tryFetch报错：',e.message);
         }
     }
 }
