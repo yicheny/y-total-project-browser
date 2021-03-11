@@ -18,7 +18,7 @@
     background-color: rgba(230, 238, 232, 0.5);
     box-shadow: 0 0 8px black;
     border-radius: 4px;
-    animation: 0.5s linear 0s 1 normal none running loginCardAnimation;
+    //animation: 0.5s linear 0s 1 normal none running loginCardAnimation;
     @keyframes loginCardAnimation {
       from {
         transform: perspective(0) rotateX(0);
@@ -38,6 +38,18 @@
       }
       width:360px;
       height:210px;
+    }
+  }
+
+  &-error{
+    margin-top:8px;
+    height:16px;
+    color:red;
+    white-space: nowrap;
+    &-inner{
+      background:rgba(255,255,255,0.96);
+      padding: 4px 12px;
+      border-radius: 4px;
     }
   }
 }
