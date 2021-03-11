@@ -1,0 +1,43 @@
+.login{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &-card {
+    &:hover{
+      box-shadow: black 0 0 50px;
+      transition: ease all 300ms;
+    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:720px;
+    height:420px;
+    background-color: rgba(230, 238, 232, 0.5);
+    box-shadow: 0 0 8px black;
+    border-radius: 4px;
+    animation: 0.5s linear 0s 1 normal none running loginCardAnimation;
+    @keyframes loginCardAnimation {
+      from {
+        transform: perspective(0) rotateX(0);
+      }
+      to {
+        transform: perspective(2500px) rotateX(360deg);
+      }
+    }
+
+    &-body{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .c-input-wrap{
+        margin-bottom:16px;
+      }
+      width:360px;
+      height:210px;
+    }
+  }
+}

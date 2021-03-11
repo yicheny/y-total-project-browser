@@ -1,7 +1,8 @@
 import { useEffect, useCallback } from 'react';
 import _ from 'lodash';
 import { usePrevious } from "../index";
-import { api,tryExecute } from "../../utils";
+import {api} from '../../base';
+import { tryExecute } from "../../utils";
 import useApiStatus from "./useApiStatus";
 import useApiUnmount from "./useApiUnmount";
 

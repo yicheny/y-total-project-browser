@@ -1,9 +1,9 @@
 import React, {Fragment, useRef, useState} from "react";
+import _ from "lodash";
 import {Button, Switch} from "../../components";
 import message from "../../components/Message/Message";
-import _ from "lodash";
+import { api } from "../../base";
 import './Option.scss';
-import { api } from "../../utils";
 
 export default function Option({data,query,selection,setOpenInfo}){
     const [isClear,setIsClear] = useState(true);
