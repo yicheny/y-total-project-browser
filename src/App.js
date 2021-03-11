@@ -13,10 +13,10 @@ const MENU_OPTION = {
 };
 
 function App({ history }) {
-    // if (_.isNil(globalData.user)){
-    //     history.replace('/login');
-    //     return null;
-    // }
+    if (_.isNil(globalData.user)){
+        history.replace('/login');
+        return null;
+    }
 
     return (<div className="app">
         <Menu option={ MENU_OPTION }/>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './Login.scss';
-import { Button, Input } from "./components";
+import {Button, Input, message} from "./components";
 import { api, globalData } from "./base";
 
-function Login(props) {
+function Login({history}) {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -29,7 +29,10 @@ function Login(props) {
         try{
             await loginRequest(userName,password);
             setLoading(false);
+            message.show({info:'登录成功！',icon:'success'})
+            history.push("/study-record")
         }catch ( e ){
+            console.log('登录报错：',e);
             setError(e.message);
             setLoading(false);
         }
@@ -45,6 +48,6 @@ function loginRequest(name, pwd, encrypted = false) {
     data.append('encrypted', encrypted);
 
     return api.post('/user/login', data).then(res => {
-        globalData.User = res.data;
+        globalData.user = res.data;
     });
 }
