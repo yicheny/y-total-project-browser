@@ -1,26 +1,134 @@
-import axios from "axios";
+import Axios from "Axios";
+import _ from 'lodash';
 
 class API{
-    constructor() {
-        this._axios = axios;
+    static servers = undefined;
+    static init() {
+        API.servers = null;
+        const settings = window.extends_settings;
+        if (_.get(settings,'api_server.enable')) {
+            if (_.isArray(settings.api_server.url)) {
+                API.servers = _.map(settings.api_server.url, o => {
+                    return Axios.create({ baseURL: o.trim() })
+                })
+            } else{
+                API.servers = [Axios.create({ baseURL: settings.api_server.url })];
+            }
+        }
     }
 
-    get(url){
+    constructor(index) {
+        this.index = index;
+        this.axios = null;
+        this.source = Axios.CancelToken.source();
+    }
+
+    _ensureAxios() {
+        if (API.servers === undefined)
+            API.init();
+        if (API.servers === null || API.servers.length === 0)
+            throw new Exception(Exception.SYSTEM, -2, '服务器未正确设置。');
+        if (API.servers.length <= this.index)
+            throw new Exception(Exception.SYSTEM, -3, '指定的服务器设置不正确。');
+        if (this.index < API.servers.length)
+            this.axios = API.servers[this.index];
+    }
+
+    _isStandardData(d){
+        if(!_.isPlainObject(d)) return false;
+        if(!d.hasOwnProperty('code') || !d.hasOwnProperty('message')) return false;
+        return true;
+    }
+
+    _request(method,url,data,onUploadProgress,cancel){
         return new Promise(async (resolve,reject)=>{
-            try{
-                const res = await this._axios.get(url);
-                resolve(res.data);
-            }catch (e){
-                const error = {
-                    _code:e.request.status,
-                    _message:e.message
+            const setConfigCancelToken = (config) => {
+                if (cancel === undefined || cancel === true){
+                    config.cancelToken = this.source.token;
+                } else if (cancel instanceof Axios.CancelToken){
+                    config.cancelToken = cancel;
                 }
-                reject(error);
+            }
+
+            try{
+                this._ensureAxios();
+                const config = { method, url, data, onUploadProgress, headers:{
+                        xorigin:window.location.origin
+                    } }
+                setConfigCancelToken(config);
+                const res = (await this.axios.request(config)).data;
+                if(!this._isStandardData(res)) {
+                    return reject(new Exception(Exception.API,-1,'返回的数据结构不正确',url))
+                }
+                if(res.code === 0) {
+                    return resolve(res);
+                }
+                return reject(new Exception(Exception.API,res.code,res.message,url));
+            }catch (e){
+                reject(new Exception(Exception.API,e.request.status,`HttpRequest Error：${e.message}`,url));
             }
         })
     }
 
+    download(url){
+        const link = document.createElement('a');
+        link.href = url;
+        link.click();
+    }
+
+    get(url,cancel){
+        return this._request('get',url,undefined,undefined,cancel);
+    }
+
+    post(url,params,onUploadProgress,cancel){
+        return this._request('post',url,params,onUploadProgress,cancel)
+    }
+
+    put(url, params, cancel) {
+        return this._request('put', url, params, undefined, cancel);
+    }
+
+    delete(url, params, cancel) {
+        return this._request('delete', url, params, undefined, cancel);
+    }
+
+    cancelTokenSourceFor() {
+        return Axios.CancelToken.source();
+    }
 }
 
-const api = new API();
+const api = new API(0);
 export default api;
+
+class Exception{
+    static SYSTEM = "SYSTEM";
+    static API = "API";
+
+    constructor(type,code,message,url) {
+        this._type = type;
+        this._code = code;
+        this._message = message;
+        this._url = url;
+    }
+
+    get url(){
+        return this._url;
+    }
+
+    get code(){
+        return this._code;
+    }
+
+    get message(){
+        return this._message;
+    }
+
+    get type(){
+        return this._type;
+    }
+
+    get text(){
+        return `[${this._code} ${this._message}`;
+    }
+}
+

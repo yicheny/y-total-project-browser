@@ -2,8 +2,8 @@ import React, {Fragment, useRef, useState} from "react";
 import {Button, Switch} from "../../components";
 import message from "../../components/Message/Message";
 import _ from "lodash";
-import axios from "axios";
 import './Option.scss';
+import { api } from "../../utils";
 
 export default function Option({data,query,selection,setOpenInfo}){
     const [isClear,setIsClear] = useState(true);
@@ -33,23 +33,21 @@ export default function Option({data,query,selection,setOpenInfo}){
             formData.append('file',file,file.name);
         })
         formData.append('isClear',isClear)
-        await tryFetch(()=>axios.post("/api/study-record/uploadFile",formData));
+        await tryFetch(()=>api.post("/study-record/uploadFile",formData));
         message.show({info:"文件上传成功！",icon:"success"});
     }
 
     async function download() {
-        const link = document.createElement('a');
-        link.href = "/api/study-record/downloadFile";
-        link.click();
+        api.download("/api/study-record/downloadFile");
     }
 
     async function add() {
-        await tryFetch(() => axios.get("/api/study-record/add"));
+        await tryFetch(() => api.get("/study-record/add"));
     }
 
     async function deleteByIds() {
         if(!selection.length) return message.show({info:"请至少选择一条数据！",icon:"error"});
-        await tryFetch(() => axios.post("/api/study-record/delete", _.map(selection, x => x['_id'])));
+        await tryFetch(() => api.post("/study-record/delete", _.map(selection, x => x['_id'])));
     }
 
     async function tryFetch(fetch) {

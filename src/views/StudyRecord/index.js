@@ -1,9 +1,8 @@
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import _ from 'lodash';
-import axios from 'axios';
 import { Table } from "../../components";
 import './index.scss';
-import {createTime} from "../../utils";
+import { api, createTime } from "../../utils";
 import message from "../../components/Message/Message";
 import { Operations } from "../../bizComponents";
 import { useOpenInfo } from "../../hooks";
@@ -73,7 +72,7 @@ function useData() {
     const [data, setData] = useState([]);
 
     const query = useCallback(() => {
-        axios.get("/api/study-record/query").then(res => {
+        api.get("/study-record/query").then(res => {
             setData(res.data)
         }).catch(e => {
             console.error(e.message);

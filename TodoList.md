@@ -11,7 +11,11 @@
 - [x] `Table`实现左右固定
 - [x] `Table`实现自适应伸缩 
 - [x] `Table`实现虚拟化
-- [ ] 规范API返回格式
+- [x] 规范API返回格式
+    - [x] 生成随机数据
+    - [x] 删除
+    - [x] 查询
+    - [x] 上传
 - [ ] 添加`loading`
 - [ ] `Table`添加`Tooltip`
 - [ ] `Table`实现统计行
