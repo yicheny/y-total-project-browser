@@ -3,12 +3,12 @@ import _ from 'lodash';
 import { Table } from "../../components";
 import './index.scss';
 import { createTime } from "../../utils";
-import message from "../../components/Message/Message";
 import { Container, Operations } from "../../bizComponents";
 import { useGet, useOpenInfo } from "../../hooks";
 import EditDialog from "./EditDialog";
 import TotalDialog from "./TotalDialog";
 import Option from "./Option";
+import DeleteDialog from "./DeleteDialog";
 
 const defaultData = [];
 function StudyRecord() {
@@ -17,14 +17,24 @@ function StudyRecord() {
     const {openInfo,setOpenInfo,close} = useOpenInfo();
 
     return (<div className='study-record' style={{minWidth:932}}>
-        <Option data={data} selection={selection} query={query} setOpenInfo={setOpenInfo}/>
+        <Option data={data} selection={selection} setOpenInfo={setOpenInfo} tryFetch={tryFetch}/>
         <Container loading={loading} error={error}>
             <Table data={data} columns={useColumns(setOpenInfo)} option={useTableOption()}
                    defaultSelection={defaultData} onSelectionChange={setSelection}/>
         </Container>
         <EditDialog visible={openInfo.type === 'edit'} close={close} source={openInfo.source}/>
         <TotalDialog visible={openInfo.type === 'total'} close={close} data={data}/>
+        <DeleteDialog visible={openInfo.type === 'delete'}  close={close} tryFetch={tryFetch} data={openInfo.data}/>
     </div>);
+
+    async function tryFetch(fetch) {
+        try {
+            await fetch();
+            query();
+        } catch (e) {
+            console.error('tryFetch报错：',e.message);
+        }
+    }
 }
 
 export default StudyRecord;
@@ -61,13 +71,13 @@ function useColumns(setOpenInfo){
 
         function getOperations(v,o,i){
             const options = [
-                // {text:"编辑",onClick:()=>setOpenInfo({type:"edit",source:_.clone(o)})},
-                {text:"编辑",disabled: true},
-                {text:"删除",onClick:()=>message.show({info:'即将开发的部分'})},
+                {text:"编辑",onClick:()=>setOpenInfo({type:"edit",source:_.clone(o)})},
+                // {text:"编辑",disabled: true},
+                {text:"删除",onClick:()=>setOpenInfo({type:"delete",data:_.clone(o)})},
             ]
             return <Operations options={options}/>
         }
-    },[])
+    },[setOpenInfo])
 }
 
 function useData() {

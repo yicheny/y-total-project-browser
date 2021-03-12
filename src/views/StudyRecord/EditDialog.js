@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import _ from 'lodash';
-import { Modal } from "../../components";
+import { Input, Modal } from "../../components";
 import { createTime } from "../../utils";
 
 const format = v => createTime(v).toDate().format("YYYY-MM-DD").value;
@@ -14,11 +14,12 @@ function EditDialog({ visible,close,source }) {
 
     return <Modal visible={visible}
                   move
-                  header='编辑数据'
+                  header={<h4>编辑信息</h4>}
                   confirm={handleConfirm}
                   cancel={close}>
-        <FormInput label='id' disabled defaultValue={_.get(data,'_id')}/>
-        <FormInput label='信息' defaultValue={_.get(data,'info')}/>
+        {/*<FormInput label='id' disabled defaultValue={_.get(data,'_id')}/>*/}
+        <FormInput label='学习信息' defaultValue={_.get(data,'info.studyInfo')}/>
+        <FormInput label='复习信息' defaultValue={_.get(data,'info.reviewInfo')}/>
         <FormInput label='日期' defaultValue={format(_.get(data,'date'))}/>
         <FormInput label='时间' defaultValue={_.get(data,'time')}/>
     </Modal>
@@ -30,9 +31,9 @@ function EditDialog({ visible,close,source }) {
 
 export default EditDialog;
 
-function FormInput({label,labelWidth=40,componentWidth=180,...rest}){
+function FormInput({label,labelWidth=80,componentWidth=180,...rest}){
     return <div style={{display:'flex',margin:6}}>
-        <div style={{width:labelWidth}}>{label}</div>
-        <input style={{width:componentWidth}} {...rest}/>
+        <div style={{width:labelWidth,textAlign:'right',marginRight:4}}>{label}：</div>
+        <Input style={{width:componentWidth}} {...rest}/>
     </div>
 }

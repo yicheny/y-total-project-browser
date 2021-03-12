@@ -5,7 +5,7 @@ import message from "../../components/Message/Message";
 import { api } from "../../base";
 import './Option.scss';
 
-export default function Option({data,query,selection,setOpenInfo}){
+export default function Option({data,tryFetch,selection,setOpenInfo}){
     const [isClear,setIsClear] = useState(true);
     const inputRef = useRef();
 
@@ -50,15 +50,6 @@ export default function Option({data,query,selection,setOpenInfo}){
     async function deleteByIds() {
         if(!selection.length) return message.show({info:"请至少选择一条数据！",icon:"error"});
         await tryFetch(() => api.post("/study-record/delete", _.map(selection, x => x['_id'])));
-    }
-
-    async function tryFetch(fetch) {
-        try {
-            await fetch();
-            query();
-        } catch (e) {
-            console.error('tryFetch报错：',e.message);
-        }
     }
 }
 

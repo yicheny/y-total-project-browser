@@ -3,6 +3,7 @@ $active-back-color:#5477ff;
 .c-menu {
   &-wrap{
     background: #fff;
+    //border-right: 1px solid #e1e1e1;
     .c-zoom-btn{
       line-height: 1.575;
       text-align: center;
@@ -11,6 +12,7 @@ $active-back-color:#5477ff;
       font-weight: 600;
       font-size: 24px;
       color: rgba(0,0,0,0.36);
+      border-bottom: 1px solid rgba(0,0,0,0.12);
     }
   }
 
@@ -22,10 +24,9 @@ $active-back-color:#5477ff;
   }
   width: 240px;
   position: relative;
-  border-right: 1px solid #e1e1e1;
   user-select: none;
   background: #fff;
-  transition: width 240ms;
+  transition: width 180ms;
 
   .c-menu-item {
     cursor: pointer;
