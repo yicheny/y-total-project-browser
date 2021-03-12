@@ -12,7 +12,6 @@ function getRunTimeOption(option) {
         rightLeft: 0,
         virtualized: true,
         fill: false,
-        virtualizedCount:40,
         rowHeight:35
     })
 }

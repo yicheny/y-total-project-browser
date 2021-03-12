@@ -8,7 +8,10 @@ import { getColCommonProp } from "../utils";
 export default function Content({ data, columns, contentRef, setXOffset, option }) {
     const [topElementCount, setTopElementCount] = useState(0);
 
-    const { rowHeight,virtualizedCount } = option;
+    const { rowHeight } = option;
+
+    const virtualizedCount = Math.ceil(_.get(contentRef.current,'clientHeight',0) / rowHeight);
+
     const renderRows = useMemo(() => {
         return _.slice(data, topElementCount, topElementCount + virtualizedCount);
     }, [data, topElementCount, virtualizedCount]);
