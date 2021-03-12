@@ -83,5 +83,3 @@ function useData() {
 
     return {data:data || [], query,loading,error};
 }
-
-
