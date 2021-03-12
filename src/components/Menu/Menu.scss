@@ -1,12 +1,31 @@
 $active-back-color:#5477ff;
 
 .c-menu {
+  &-wrap{
+    background: #fff;
+    .c-zoom-btn{
+      line-height: 1.575;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      font-size: 24px;
+      color: rgba(0,0,0,0.36);
+    }
+  }
+
+  &.zoom{
+    width: 60px;
+    .c-menu-item-text{
+      display: none;
+    }
+  }
+  width: 240px;
   position: relative;
-  width: 300px;
-  min-width: 210px;
   border-right: 1px solid #e1e1e1;
   user-select: none;
   background: #fff;
+  transition: width 240ms;
 
   .c-menu-item {
     cursor: pointer;
@@ -28,14 +47,20 @@ $active-back-color:#5477ff;
       display: flex;
       justify-content: space-between;
       padding: 8px;
+      .c-menu-item-header-content{
+        white-space: nowrap;
+        .c-menu-item-title{
+          margin-right:12px;
+        }
+      }
       >.icon-arrowDown{
         transform: rotate(0deg);
-        transition: transform 350ms
+        transition: transform 240ms;
       };
     }
 
     > .c-menu-sub {
-      transition: height 350ms;
+      transition: height 240ms;
     }
   }
 }

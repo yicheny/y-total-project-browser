@@ -1,7 +1,6 @@
-
-
 .c-input{
   &-wrap{
+    width:180px;
     display: inline-flex;
     align-items: center;
     height:32px;
@@ -29,6 +28,7 @@
     background: #fafafa;
     border:1px solid #d9d9d9;
     padding: 0 8px;
+    white-space: nowrap;
   }
 
   &-prefix{
@@ -46,13 +46,13 @@
   }
   &:focus{
     border-color: #40a9ff;
-    border-right-width: 1px !important;
+    border-right-width: 1px;
     outline: 0;
     box-shadow: 0 0 0 3px rgba(64,169,255,.18);
   }
+  width: 100%;
   outline: none;
   box-sizing: border-box;
-  width:180px;
   height: 100%;
   padding:4px 11px;
   border:1px solid #d9d9d9;

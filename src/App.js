@@ -6,11 +6,9 @@ import './App.scss';
 import { Menu } from "./components";
 import { globalData } from "./base";
 
-const MENU_OPTION = {
-    details: [
-        { text: 'StudyRecord 成长统计记录', to: "/study-record" },
-    ]
-};
+const MENU_DATA= [
+    { title:"SR", text: 'StudyRecord 成长统计记录', to: "/study-record" },
+];
 
 function App({ history }) {
     if (_.isNil(globalData.user)){
@@ -19,7 +17,7 @@ function App({ history }) {
     }
 
     return (<div className="app">
-        <Menu option={ MENU_OPTION }/>
+        <Menu data={ MENU_DATA }/>
         <div className="app-content">
             <Switch>
                 <Route path='/study-record' component={ StudyRecord }/>
