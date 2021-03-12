@@ -48,8 +48,10 @@ export default function Option({data,tryFetch,selection,setOpenInfo}){
     }
 
     async function deleteByIds() {
-        if(!selection.length) return message.show({info:"请至少选择一条数据！",icon:"error"});
-        await tryFetch(() => api.post("/study-record/delete", _.map(selection, x => x['_id'])));
+        await tryFetch(() => {
+            if(!selection.length) throw new Error("请至少选择一条数据！");
+            api.post("/study-record/delete", _.map(selection, x => x['_id']))
+        });
     }
 }
 

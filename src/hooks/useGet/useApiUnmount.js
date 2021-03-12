@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import _ from 'lodash';
 import { api } from "../../base";
 
 export default function useApiUnmount() {
@@ -13,5 +14,5 @@ export default function useApiUnmount() {
         }
     }, [])
 
-    return { token: cancel_ref.current.token }
+    return { token: _.get(cancel_ref.current,'token') }
 }

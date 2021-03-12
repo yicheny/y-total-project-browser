@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import _ from 'lodash';
-import { Table } from "../../components";
+import { message, Table } from "../../components";
 import './index.scss';
 import { createTime } from "../../utils";
 import { Container, Operations } from "../../bizComponents";
@@ -32,7 +32,7 @@ function StudyRecord() {
             await fetch();
             query();
         } catch (e) {
-            console.error('tryFetch报错：',e.message);
+            message.show({info:e.message,icon:'error'})
         }
     }
 }

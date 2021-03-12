@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Login.scss';
-import {Button, Input, message} from "./components";
+import { Button, Input, Loader, message } from "./components";
 import { api, globalData } from "./base";
 
 function Login({history}) {
@@ -11,6 +11,7 @@ function Login({history}) {
 
     return (<div className='login'>
         <div className="login-card">
+            {loading && <Loader fill/>}
             <div className="login-card-body">
                 <Input type='text' prefix='用户' onChange={setUserName}/>
                 <Input type='password' prefix='密码' onChange={setPassword}/>
@@ -32,7 +33,7 @@ function Login({history}) {
             message.show({info:'登录成功！',icon:'success'})
             history.push("/study-record")
         }catch ( e ){
-            console.log('登录报错：',e);
+            // console.log('登录报错：',e);
             setError(e.message);
             setLoading(false);
         }
