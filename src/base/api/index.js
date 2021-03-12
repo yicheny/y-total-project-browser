@@ -1,5 +1,6 @@
 import Axios from "axios";
 import _ from 'lodash';
+import { globalData } from "../index";
 
 class API{
     static servers = undefined;
@@ -53,6 +54,7 @@ class API{
             try{
                 this._ensureAxios();
                 const config = { method, url, data, onUploadProgress, headers:{
+                        uuid:_.get(globalData,'user.uuid'),
                         xorigin:window.location.origin
                     } }
                 setConfigCancelToken(config);
@@ -71,9 +73,33 @@ class API{
     }
 
     download(url){
+        if (!_.isString(url)) throw new Error("Parameter url is not valid.");
+
+        let href = '';
+        addPrefix();
+        addUuid();
+
         const link = document.createElement('a');
-        link.href = url;
+        link.href = href;
         link.click();
+
+        function addPrefix(){
+            if (url.startsWith('/')){
+                href = href + url;
+            }
+            else{
+                href = href + '/' + url;
+            }
+        }
+
+        function addUuid(){
+            if (href.indexOf('?') < 0){
+                href = href + `?uuid=${globalData.user.uuid}`;
+            }
+            else{
+                href = href + `&uuid=${globalData.user.uuid}`;
+            }
+        }
     }
 
     get(url,cancel){
