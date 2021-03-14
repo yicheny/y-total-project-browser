@@ -1,0 +1,9 @@
+.c-form-input{
+  display: flex;
+  margin:6px;
+  align-items: center;
+  &-label{
+    text-align: right;
+    margin-right: 4px;
+  }
+}
