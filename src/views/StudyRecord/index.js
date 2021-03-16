@@ -2,7 +2,7 @@ import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import _ from 'lodash';
 import { message, Table } from "../../components";
 import './index.scss';
-import { createTime } from "../../utils";
+import { format } from "../../utils";
 import { Container, Operations } from "../../bizComponents";
 import { useGet, useOpenInfo } from "../../hooks";
 import EditDialog from "./EditDialog";
@@ -61,7 +61,7 @@ function useColumns(setOpenInfo){
                 bind: 'date',
                 width: 160,
                 align: "center",
-                convert: v => createTime(new Date(v)).format("YYYY-MM-DD").value
+                convert: format("YYYY-MM-DD")
             },
             {header: "时间",width:60, bind: 'time'},
             {header: "学习信息", bind: 'info.studyInfo', width: 420, convert:v=>_.join(v,'、')},

@@ -1,8 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import {Form, FormInput, Modal} from "../../components";
-import { createTime } from "../../utils";
-
-const format = v => createTime(v).toDate().format("YYYY-MM-DD").value;
+// import { format } from "../../utils";
 
 function EditDialog({ visible,close,source }) {
     const [data,setData] = useState(source);
@@ -20,7 +18,10 @@ function EditDialog({ visible,close,source }) {
         <Form value={data} onChange={setData}>
             <FormInput label='学习信息' bind='info.studyInfo'/>
             <FormInput label='复习信息' bind='info.reviewInfo'/>
-            <FormInput label='日期' bind='date'/>
+            <FormInput label='日期' bind='date'
+                       // bindConvertIn={format('YYYY-MM-DD')}
+                       // bindConvertOut={v=>new Date(v)}
+                        />
             <FormInput label='时间' bind='time'/>
         </Form>
     </Modal>
