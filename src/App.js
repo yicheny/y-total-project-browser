@@ -10,9 +10,13 @@ const MENU_DATA= [
     { title:"SR", text: 'StudyRecord 成长统计记录', to: "/study-record" },
 ];
 
-function App({ history }) {
+function App({ history,location }) {
     if (_.isNil(globalData.user)){
-        history.replace('/login');
+        let url = '/login';
+        if(location.pathname && location.pathname.length > 1){
+            url = `/login?return=${escape(location.pathname + location.search)}`;
+        }
+        history.replace(url);
         return null;
     }
 

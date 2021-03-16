@@ -159,7 +159,7 @@ function updateXScrollOffset(runtime, contentRef) {
         if (content.scrollHeight > content.clientHeight) {
             runtime.current.xScrollOffset = content.offsetWidth - content.clientWidth;
         } else {
-            runtime.current.xScrollOffset = 0
+            runtime.current.xScrollOffset = 0;
         }
     }
 }

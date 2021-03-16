@@ -65,6 +65,11 @@ class API{
                 if(res.code === 0) {
                     return resolve(res);
                 }
+                if(res.code === 2007){
+                    globalData.user = null;
+                    sessionStorage.setItem("user-session-expired", "1");
+                    window.location.reload();
+                }
                 return reject(new Exception(Exception.API,res.code,res.message,url));
             }catch (e){
                 reject(new Exception(Exception.API,_.get(e,'request.status'),`HttpRequest Error：${e.message}`,url));
