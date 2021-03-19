@@ -5,9 +5,11 @@ import StudyRecord from "./views/StudyRecord";
 import './App.scss';
 import { Menu } from "./components";
 import { globalData } from "./base";
+import ProxyNumberDemo from "./views/WorkDemo/ProxyNumberDemo";
 
 const MENU_DATA= [
-    { title:"SR", text: 'StudyRecord 成长统计记录', to: "/study-record" },
+    { title:"SR", text: 'StudyRecord', to: "/study-record" },
+    { title:"PN", text: "ProxyNumberDemo", to:'/work-demo/proxy-number'}
 ];
 
 function App({ history,location }) {
@@ -25,6 +27,7 @@ function App({ history,location }) {
         <div className="app-content">
             <Switch>
                 <Route path='/study-record' component={ StudyRecord }/>
+                <Route path='/work-demo/proxy-number' component={ ProxyNumberDemo }/>
                 <Route component={ StudyRecord }/>
             </Switch>
         </div>

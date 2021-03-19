@@ -7,7 +7,7 @@ import './Input.scss';
 function Input({value,type,prefix,suffix,defaultValue,className,placeholder,onChange}) {
     const [stateValue,setStateValue] = useState(_.isUndefined(defaultValue) ? '' : _.toString(defaultValue));
 
-    const _value = _.isUndefined(value) ? stateValue : value;
+    const _value = getValue();
 
     return <div className={clsx('c-input-wrap',{prefix,suffix})}>
         {prefix && <div className='c-input-prefix'>{prefix}</div>}
@@ -25,6 +25,12 @@ function Input({value,type,prefix,suffix,defaultValue,className,placeholder,onCh
             setStateValue(nextValue);
             if (_.isFunction(onChange)) onChange(nextValue);
         }
+    }
+
+    function getValue(){
+        const r = _.isUndefined(value) ? stateValue : value
+        if(_.isNaN(r)) return '';
+        return r;
     }
 }
 Input.defaultProps = {
