@@ -1,25 +1,47 @@
-import React,{useState} from 'react';
-import _ from "lodash";
+import React,{useState,Fragment} from 'react';
+import _ from 'lodash';
 import { Form, FormInput } from "../../components";
 
 const ProxyNumberInput = (props)=>{
     return <FormInput suffix='%'
                       bindConvertIn={bindConvertIn}
-                      bindConvertOut={bindConvertOut} {...props}/>
+                      bindConvertOut={bindConvertOut}
+                      {...props}/>
+
+    function bindConvertIn(v){
+        return v.formValue;
+    }
+
+    function bindConvertOut(v){
+        return new Percentage(v,true);
+    }
 }
 
-const mockData = ({
+const mockSource = ({
     num1:1.2344,
     num2:333,
     num3:0.0455,
     num4:0.4131,
     num5:16.269
 })
-function ProxyNumberDemo(props) {
-    const [data,setData] = useState(initData(mockData));
+const formOptions = [
+    {component:"ProxyNumberInput",bind:'num1'},
+    {component:"ProxyNumberInput",bind:'num2'},
+    {component:"ProxyNumberInput",bind:'num3'},
+    {component:"ProxyNumberInput",bind:'num4'},
+    {component:"ProxyNumberInput",bind:'num5'}
+]
 
+// console.log(transformFormData(formOptions, mockSource));
+
+function ProxyNumberDemo(props) {
+    const [data,setData] = useState(transformFormData(formOptions,mockSource));
+
+    console.log('data',data)
     return (<div>
-        <Form value={data} onChange={setData}>
+        <Form value={data}
+              onChange={setData}>
+            {/*{ renderForm(formOptions) }*/}
             <ProxyNumberInput bind='num1'/>
             <ProxyNumberInput bind='num2'/>
             <ProxyNumberInput bind='num3'/>
@@ -31,56 +53,68 @@ function ProxyNumberDemo(props) {
 
 export default ProxyNumberDemo;
 
-//
-function bindConvertIn(value){
-    console.log('bindConvertIn',value,value instanceof ProxyNumber,value.getFormatValue());
-    if(value instanceof ProxyNumber) return value.getFormatValue();
-    // return value * 100;
-}
+function transformFormData(options,data){
+    const percentageList = _.filter(options,x=>x.component === 'ProxyNumberInput');
+    const percentageBindList =  _.map(percentageList,x=>x.bind);
+    // const percentageFormatBindList = _.map(percentageBindList,x=>x.concat('_format'))
 
-function bindConvertOut(value){
-    console.log('bindConvertOut',value)
-    if(value instanceof ProxyNumber) return value;
-    return new ConvertOutProxyNumber(value);
-}
+    return new Proxy(data,{
+        "get":function(o,prop){
+            const v = o[prop]
+            if(notIsPercentageBind(prop) || isPercentage(v)) return v;
+            return new Percentage(v);
+        },
+        // "set":function (o,prop,value){
+        //     console.log(value,isPercentage(value),'p');
+        //     if(notIsPercentageBind(prop) || isPercentage(value)){
+        //         o[prop] = value;
+        //     }else{
+        //         o[prop] = new Percentage(value)
+        //     }
+        //     return true;
+        // }
+    })
 
-class ProxyNumber{
-    get realValue(){
-        return this._realValue;
+    function notIsPercentageBind(prop){
+        return !_.includes(percentageBindList,prop)
     }
 
-    getFormatValue(){
-        let formatValue = this._realValue * 100;
-        if(!this._hasSuffix) return formatValue;
-        if(!_.includes('.')) return (formatValue + '.');
-        return formatValue;
-    }
-}
-
-class InitProxyNumber extends ProxyNumber{
-    constructor(originalValue) {
-        // console.log('InitProxyNumber-originalValue', originalValue);
-        super();
-        this._realValue = originalValue;
-        this._hasSuffix = false;
+    function isPercentage(v){
+        return v instanceof Percentage;
     }
 }
 
-class ConvertOutProxyNumber extends ProxyNumber{
-    constructor(originalValue) {
-        // console.log('ConvertOutProxyNumber-originalValue',originalValue);
-        super();
-        this._realValue = (originalValue/100).toFixed(4);
-        this._hasSuffix = false;
-    }
+function renderForm(options){
+    return <Fragment>
+        {
+            _.map(options,(opt,i)=>{
+                const {component,...rest} = opt;
+                // const Component = component;
+                return <ProxyNumberInput key={i} {...rest}/>
+            })
+        }
+        </Fragment>
 }
 
-function initData(data){
-    _.forEach(data,(value,key)=>{
-        data[key] = new InitProxyNumber(value);
-    });
-    // console.log('initData',JSON.stringify(data));
-    return data;
+class Percentage{
+    constructor(value,isFormat) {
+        if(isFormat){
+            this._formatValue = value;
+            this._value = parseFloat(this._formatValue/100);
+        }else{
+            this._value = value;
+            this._formatValue = (this._value * 100).toFixed(2);
+        }
+    }
+
+    get formValue(){
+        return this._formatValue;
+    }
+
+    set formValue(value){
+        this._formatValue = value;
+        this._value = parseFloat(this._formatValue/100);
+    }
 }
 
 /*function operationCore(a, b, op){
