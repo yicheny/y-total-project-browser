@@ -6,10 +6,12 @@ import './App.scss';
 import { Menu } from "./components";
 import { globalData } from "./base";
 import ProxyNumberDemo from "./views/WorkDemo/ProxyNumberDemo";
+import DataTriggerRender from "./views/ReactDemo/DataTriggerRender";
 
 const MENU_DATA= [
     { title:"SR", text: 'StudyRecord', to: "/study-record" },
-    { title:"PN", text: "ProxyNumberDemo", to:'/work-demo/proxy-number'}
+    // { title:"PN", text: "ProxyNumberDemo", to:'/work-demo/proxy-number'},
+    { title:"DTR", text: "DataTriggerRender", to:'/react-demo/data-trigger-render'},
 ];
 
 function App({ history,location }) {
@@ -28,6 +30,7 @@ function App({ history,location }) {
             <Switch>
                 <Route path='/study-record' component={ StudyRecord }/>
                 <Route path='/work-demo/proxy-number' component={ ProxyNumberDemo }/>
+                <Route path='/react-demo/data-trigger-render' component={ DataTriggerRender }/>
                 <Route component={ StudyRecord }/>
             </Switch>
         </div>

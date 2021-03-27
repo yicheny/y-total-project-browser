@@ -1,0 +1,27 @@
+.data-trigger-render{
+  height:100%;
+  width:100%;
+  padding:16px;
+  box-sizing: border-box;
+  display: flex;
+
+  .mock-children{
+    display: flex;
+  }
+
+  .text-tooltip{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .tooltip{
+     //display: inline;
+    }
+  }
+}
+
+.c-box{
+  flex:1;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
